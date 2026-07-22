@@ -18,3 +18,5 @@ control fails in 998/2,000 cases. One pytest check passes.
 The local publication gate passes (`outputs/publication_gate.json`). Next:
 complete the Trackio conclusion and source map, secret-scan, public GitHub
 push, then atomically enqueue. No direct HF publication is permitted.
+
+FULL_GATE_READY: uiw8P2JGbW
