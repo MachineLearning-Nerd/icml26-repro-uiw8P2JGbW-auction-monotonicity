@@ -1,0 +1,13 @@
+% Conclusion - Agent-1 Primary Section
+
+\section{Conclusion}
+\label{sec:conclusion}
+
+We introduced a formal framework for studying when improvements in prediction models lead to improvements in platform-level metrics in autobidding systems. Our central finding is striking: \textbf{model monotonicity is rare.}
+
+\paragraph{Summary.} We formalized model improvement through a refinement relation inspired by filtrations in probability theory, and systematically analyzed ECM monotonicity across bidder types, auction formats, and budget constraints. Of all settings studied, only \textbf{three} guarantee monotonicity: (1) tCPA bidders without budgets under FPA with uniform bidding at $\mu = 1$ (revenue and welfare monotonic); (2) MAX-CPA bidders without budgets under VCG (welfare monotonic only---not revenue); (3) tCPA or MAX-CPA bidders with budgets under LP-based fractional allocation (welfare monotonic; for tCPA, surrogate revenue also monotonic).
+All remaining settings studied---including VCG/SPA for tCPA bidders and FPA with budgets---exhibit non-monotonicity (verified numerically). For MAX-CPA FPA, we provide a numerical counterexample under designated feasible multiplier profiles demonstrating 66\% revenue loss and 0.09\% welfare loss; this counterexample also establishes liquid welfare non-monotonicity when using non-binding budgets.
+
+\paragraph{Incentive Compatibility Trade-off.} Our positive results reveal a fundamental trade-off between monotonicity and incentive compatibility. FPA with uniform bidding is incentive compatible---bidders choose their multipliers privately without revealing targets or budgets to the platform---but only guarantees monotonicity without budget constraints. LP-based allocation handles budgets and guarantees monotonicity, but requires the platform to know private values ($t_i$, $v_i$, $B_i$) to compute the optimal allocation, making it incentive incompatible. No known mechanism achieves both properties simultaneously with budget constraints.
+
+\paragraph{Implications.} Better models do not always yield better outcomes---platforms should validate improvements through simulation. Budget constraints broadly break monotonicity, and no auction format provides universal guarantees. The interaction between ML models, auctions, and autobidders creates dynamics where component-level improvements may not translate to system-level gains.

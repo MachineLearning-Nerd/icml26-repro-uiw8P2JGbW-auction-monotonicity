@@ -1,0 +1,51 @@
+{
+  "schema_version": 1,
+  "title": "Repro - Model Monotonicity in Autobidding Auctions",
+  "emoji": "🎯",
+  "space_id": null,
+  "paper": "2605.31036",
+  "tags": [
+    "icml2026-repro",
+    "paper-uiw8P2JGbW"
+  ],
+  "updated_at": "2026-07-22T11:58:37+00:00",
+  "root": {
+    "slug": "index",
+    "title": "Repro - Model Monotonicity in Autobidding Auctions",
+    "file": "pages/index.md",
+    "children": [
+      {
+        "slug": "six-claim-verifier",
+        "title": "Six-claim verifier",
+        "file": "pages/six-claim-verifier/page.md",
+        "children": []
+      },
+      {
+        "slug": "tests",
+        "title": "Tests",
+        "file": "pages/tests/page.md",
+        "children": []
+      },
+      {
+        "slug": "methods",
+        "title": "Methods",
+        "file": "pages/methods/page.md",
+        "children": []
+      },
+      {
+        "slug": "negative-controls",
+        "title": "Negative controls",
+        "file": "pages/negative-controls/page.md",
+        "children": []
+      },
+      {
+        "slug": "conclusion",
+        "title": "Conclusion",
+        "file": "pages/conclusion/page.md",
+        "children": []
+      }
+    ]
+  },
+  "agent_view_tokens": 753,
+  "revision": "1784721517520450894"
+}

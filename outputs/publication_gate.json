@@ -1,0 +1,48 @@
+{
+  "claims_passed": 6,
+  "evidence": {
+    "C1_refinement_revenue": {
+      "cases": 2000,
+      "min_jensen_gap": -1.7763568394002505e-15
+    },
+    "C2_calibration_necessity_negative_control": {
+      "min_wrong_model_gap": -6.263522500523175,
+      "negative_cases": 998
+    },
+    "C3_t_cpa_mu_one_optimality": {
+      "instances": 500,
+      "violations": 0
+    },
+    "C4_vcg_t_cpa_nonmonotonicity": {
+      "coarse": 3.23,
+      "fine": 3.03,
+      "loss_pct": 6.191950464396291
+    },
+    "C5_budgeted_fpa_nonmonotonicity": {
+      "coarse": 5.5267555,
+      "coarse_winners": [
+        1,
+        1,
+        0,
+        0
+      ],
+      "fine": 4.597716800000001,
+      "fine_winners": [
+        0,
+        1,
+        0,
+        0
+      ],
+      "loss_pct": 16.809838973336156
+    },
+    "C6_lp_lifting": {
+      "cases": 500,
+      "violations": 0
+    }
+  },
+  "failures": [],
+  "paper": "uiw8P2JGbW",
+  "pass": true,
+  "publication_gate_passed": true,
+  "tests_passed": true
+}

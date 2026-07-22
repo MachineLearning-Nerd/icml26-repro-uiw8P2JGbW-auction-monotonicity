@@ -1,0 +1,35 @@
+% Introduction - Agent-1 Primary Section
+
+\section{Introduction}
+\label{sec:introduction}
+
+Online advertising platforms generate hundreds of billions of dollars in annual revenue by matching advertisers with users through sophisticated auction mechanisms. At the heart of these systems lies a critical interplay between three components: (1) machine learning models that predict user behavior, such as click-through rate (\pctr{}) and conversion rate (\pcvr{}) models; (2) auction mechanisms that allocate ad impressions and determine prices; and (3) autobidding systems that bid on behalf of advertisers according to their specified objectives. Understanding how improvements in one component propagate through this system to affect platform-level outcomes is essential for both theoretical understanding and practical system design.
+
+Advertising platforms continually invest in improving their prediction models, with the natural expectation that better predictions lead to better outcomes. However, the relationship between model quality and platform metrics is far from straightforward. When a platform deploys a more accurate \pctr{} model, the change affects not only the auction mechanism's allocation decisions but also the behavior of autobidders, which adapt their bidding strategies to the new predictions. This creates a complex feedback loop where the ultimate effect on platform metrics---such as revenue, advertiser welfare, or efficiency---depends on the intricate interaction between all three components.
+
+\subsection{Motivation and Central Question}
+
+Consider a platform that improves its conversion prediction model, enabling finer-grained distinctions between users. Intuitively, one might expect that more accurate predictions should lead to more efficient allocations and higher revenue. Yet this intuition can fail. A refined model may enable some autobidders to target only the most valuable impressions more precisely, potentially reducing the competitive pressure that drives revenue. Alternatively, budget-constrained advertisers might exhaust their budgets more quickly on high-value users, leaving lower-value users unserved. These scenarios illustrate that the relationship between model quality and platform outcomes is subtle and depends critically on the auction format, bidder objectives, and resource constraints.
+
+This motivates our central research question: \emph{When do improvements in prediction models lead to improvements in platform-level Evaluation Criteria Metrics (ECM)?} We refer to this property as \textbf{ECM monotonicity} or simply \textbf{model monotonicity}. Understanding when this property holds---and when it fails---has significant implications for platform design, model deployment decisions, and the alignment of technical improvements with business objectives.
+
+\subsection{Our Contributions}
+
+We make two main contributions in this paper:
+
+\paragraph{Novel Problem Formulation.} We introduce a formal framework for studying the interaction between model quality, auction mechanisms, and autobidder behavior. Central to our approach is a definition of \emph{model refinement} inspired by filtrations in probability theory. We model prediction systems as partitioning a universe $\cU$ of users into clusters, where the model predicts the average conversion probability for each cluster. A model $\cM_A$ \emph{refines} a model $\cM_B$ if each cluster of $\cM_A$ is contained in a cluster of $\cM_B$---that is, $\cM_A$ makes finer distinctions between users. This definition captures the intuitive notion that $\cM_A$ provides ``more information'' than $\cM_B$, while being mathematically tractable for analysis.
+
+Within this framework, we consider two types of autobidders that reflect common industry practice:
+\begin{itemize}
+    \item \textbf{Target CPA (tCPA) bidders}: Advertisers specify a target cost-per-acquisition and seek to maximize conversion volume subject to maintaining an average CPA at or below their target.
+    \item \textbf{MAX-CPA bidders}: Advertisers specify a maximum willingness-to-pay per conversion and seek to maximize total value, where each conversion's value equals the advertiser's maximum CPA.
+\end{itemize}
+Following standard autobidding practice~\citep{aggarwal2024autobidding}, we assume tCPA targets equal true per-conversion values ($v_i = t_i$), ensuring welfare equals revenue for tCPA bidders without budgets under FPA with multiplier $\mu_i = 1$.
+We study these bidder types across multiple auction formats (first-price, VCG---which is equivalent to second-price for single-item auctions) and under both unconstrained and budget-constrained settings.
+
+\paragraph{Systematic Characterization of ECM Monotonicity.} We provide a comprehensive analysis of when model refinement leads to improvements in platform-level metrics, with our systematic characterization in \Cref{tab:monotonicity}. We find that monotonicity is \emph{rare}---only three settings guarantee it: (1) tCPA bidders without budgets under FPA (via Jensen's inequality), (2) MAX-CPA bidders without budgets under VCG (welfare only), and (3) LP-based fractional allocation with budgets (welfare monotonic; for tCPA, surrogate revenue also monotonic; not incentive compatible). In all remaining settings studied---including VCG for tCPA bidders and FPA with budget constraints---monotonicity fails. We provide explicit numerical constructions for these non-monotonicity results.
+
+
+\paragraph{Key Insights.} Our results yield several insights: (1) Monotonicity is rare---only three settings guarantee it, so platforms should not assume model improvements translate to metric improvements. (2) FPA provides the only revenue monotonicity guarantee (for tCPA without budgets), while VCG provides the only welfare guarantee (for MAX-CPA without budgets). (3) A fundamental trade-off exists between incentive compatibility and monotonicity with budget constraints. (4) Model improvements should be validated through simulation or A/B testing.
+
+\paragraph{Conflict of Interest Disclosure.} The author is employed by Uber, which operates advertising systems that use auction mechanisms.

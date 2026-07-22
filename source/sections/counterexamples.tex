@@ -1,0 +1,29 @@
+% Counterexamples - Condensed Version
+
+\section{Counterexamples}
+\label{sec:counterexamples}
+
+This section summarizes the numerical counterexamples establishing non-monotonicity. Full calculations appear in \Cref{app:counterexamples}.
+
+\paragraph{Representative Counterexample: VCG/SPA Revenue and Welfare Non-Monotonicity.}
+Two tCPA bidders with $t_A = 10$, $t_B = 1$. Four auctions (one impression each) with conversion probabilities:
+\begin{center}
+\begin{small}
+\begin{tabular}{lcccc}
+\toprule
+& Auction 0 & Auction 1 & Auction 2 & Auction 3 \\
+\midrule
+Bidder A & 0.20 & 0.05 & 0.01 & 0.01 \\
+Bidder B & 0.08 & 0.30 & 0.03 & 0.70 \\
+\bottomrule
+\end{tabular}
+\end{small}
+\end{center}
+
+Under the \emph{coarse model} (partition $\{\{0,1\}, \{2,3\}\}$), equilibrium multipliers yield: $A$ wins $\{0,1\}$, $B$ wins $\{2,3\}$, with both bidders exactly at their tCPA. Revenue $= 3.23$, Welfare $= t_A \cdot 0.25 + t_B \cdot 0.73 = 3.23$ (where $0.25 = 0.20{+}0.05$ and $0.73 = 0.03{+}0.70$ are total conversions across won auctions).
+
+Under the \emph{fine model} (singletons), equilibrium multipliers shift: $A$ wins only auction 0, $B$ wins $\{1,2,3\}$, again with both at tCPA. Revenue $= 3.03$, Welfare $= t_A \cdot 0.20 + t_B \cdot 1.03 = 3.03$ (where $1.03 = 0.30{+}0.03{+}0.70$).
+
+\textbf{Result}: Both revenue and welfare decrease by 6.2\% despite $\cM_A \succeq \cM_B$. The intuition: refinement reallocates high-value impressions (auction 1) from the high-$t$ bidder to the low-$t$ bidder, reducing value-weighted conversions. Full calculations in \Cref{app:counter-vcg-tcpa}.
+
+\paragraph{Key Insights.} VCG/SPA payments depend on competition, which refinement can reduce. Budgets change utilization patterns, potentially eliminating competition in some segments (though LP-based allocation guarantees monotonicity per \Cref{thm:lp-mono}).

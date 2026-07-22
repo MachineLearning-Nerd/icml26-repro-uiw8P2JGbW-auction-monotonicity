@@ -1,0 +1,80 @@
+% Auction Theory and Bidder Models - Agent-2
+
+\section{Auction Mechanisms and Bidder Models}
+\label{sec:auctions}
+
+We formalize the auction mechanisms and bidder models underlying our analysis. For comprehensive background on auction theory, see \citet{krishna2009auction}; for autobidding systems, see \citet{aggarwal2019autobidding}.
+
+\subsection{Auction Environment}
+
+Consider advertisers $\cA = \{1, \ldots, n\}$ competing for impressions across a user population partitioned into clusters $\cP$ by prediction model $\cM$. For each advertiser $i$ and cluster $C$, the platform observes predicted conversion probability $p_{i,C}$, defined as the cluster-averaged conversion probability (\Cref{def:prediction_model}). We assume the model is well-calibrated within each cluster.
+
+\subsection{Bidder Models}
+
+\begin{definition}[tCPA Bidder]
+\label{def:tcpa}
+A \emph{target cost-per-acquisition (tCPA)} bidder $i$ has target $t_i > 0$ and seeks to maximize conversions subject to average cost per conversion $\leq t_i$.
+\end{definition}
+
+\begin{definition}[MAX-CPA Bidder]
+\label{def:maxcpa}
+A \emph{maximum cost-per-acquisition (MAX-CPA)} bidder $i$ has per-conversion value $v_i > 0$ and maximizes total expected value (conversions times $v_i$) minus total payment. This bidder obtains positive surplus from an impression only when expected cost per conversion satisfies $\pi/p_{i,C} \leq v_i$, where $\pi$ denotes the per-impression payment.
+\end{definition}
+
+The key distinction: tCPA bidders maximize conversions subject to an average cost constraint; MAX-CPA bidders maximize quasi-linear utility (value minus payment). Either type may have a budget constraint $B_i > 0$ limiting total expenditure.
+
+\subsection{Uniform Bidding}
+
+\begin{definition}[Uniform Bidding]
+\label{def:uniform-bidding}
+Under \emph{uniform bidding}, bidder $i$ selects multiplier $\mu_i \geq 0$ and bids $b_i(C) = \mu_i \cdot t_i \cdot p_{i,C}$ (tCPA) or $b_i(C) = \mu_i \cdot v_i \cdot p_{i,C}$ (MAX-CPA).
+\end{definition}
+
+For MAX-CPA bidders, we define the \emph{effective multiplier} $g_i := \mu_i \cdot v_i$, so bids simplify to $b_i(C) = g_i \cdot p_{i,C}$.
+
+\begin{lemma}[Optimal Multiplier for tCPA in FPA]
+\label{lem:optimal-multiplier}
+For a tCPA bidder without budget constraints in a first-price auction, the optimal uniform multiplier is $\mu_i^* = 1$.
+\end{lemma}
+
+\begin{proof}[Proof Sketch]
+In FPA with uniform bidding $b_i(C) = \mu_i \cdot t_i \cdot p_{i,C}$, the CPA in any won cluster is $\mu_i \cdot t_i$. Thus $\mu_i \leq 1$ is required for feasibility. Since conversions increase with $\mu_i$, the optimal choice is $\mu_i = 1$.
+\end{proof}
+
+\subsection{Auction Formats}
+
+\begin{definition}[First-Price Auction (FPA)]
+\label{def:fpa}
+The highest bidder wins and pays their bid: $i^* = \arg\max_i b_i$, payment $\pi_{i^*} = b_{i^*}$. (Ties broken by lowest index.)
+\end{definition}
+
+\begin{definition}[Second-Price Auction (SPA)]
+\label{def:spa}
+The highest bidder wins and pays the second-highest bid: $i^* = \arg\max_i b_i$, payment $\pi_{i^*} = \max_{j \neq i^*} b_j$.
+\end{definition}
+
+\begin{remark}[SPA-VCG Equivalence]
+\label{rem:spa-vcg-equiv}
+For single-item auctions, SPA and VCG are equivalent mechanisms: both allocate to the highest bidder and charge the second-highest bid. The VCG payment equals the externality imposed on other bidders, which for a single item is precisely the second-highest bid. Hence, all results stated for VCG in single-item settings apply equally to SPA.
+\end{remark}
+
+\begin{definition}[VCG Mechanism]
+\label{def:vcg}
+VCG computes the welfare-maximizing allocation and charges each winner their externality (the welfare loss imposed on others).
+\end{definition}
+
+\begin{definition}[LP Allocation Benchmark]
+\label{def:lp-benchmark}
+The \emph{LP allocation benchmark} is a centralized fractional allocation-and-payment rule that directly chooses allocation variables $x_{i,C} \in [0,1]$ subject to supply and budget feasibility constraints. Unlike FPA, SPA, or VCG, this benchmark is not a strategic auction mechanism: it assumes the platform knows the relevant bidder parameters and optimizes allocations and surrogate payments directly. We use it only as a comparison point for monotonicity under budget constraints.
+\end{definition}
+
+\subsection{Evaluation Criteria Metrics}
+
+We use the revenue, welfare, and liquid welfare metrics from \Cref{def:ecm}. In the auction analysis, welfare is written cluster-wise as $\sum_i \E[\mathbf{1}[i \text{ wins}] \cdot v_i \cdot p_{i,C}]$, and liquid welfare caps each bidder's contribution at their budget.
+
+\subsection{Equilibrium Concept}
+
+\begin{assumption}[Equilibrium Convention]
+\label{ass:equilibrium}
+Bidders choose uniform multipliers $\mu_i$ to optimize their objective (conversions subject to CPA $\leq t_i$ for tCPA; quasi-linear utility for MAX-CPA) taking others' multipliers as given. We assume an equilibrium exists. When multiple equilibria preserve the same allocation, our positive results hold for all such equilibria; counterexamples exhibit one valid equilibrium (typically with binding CPA constraints for transparency), except for MAX-CPA FPA which uses designated feasible multiplier profiles without a full equilibrium claim. For FPA with tCPA bidders, symmetric equilibrium corresponds to $\mu_i = 1$ (truthful bidding).
+\end{assumption}

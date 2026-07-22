@@ -1,0 +1,18 @@
+% Related Work - Agent-1 Primary Section
+
+\section{Related Work}
+\label{sec:related}
+
+Our work studies model monotonicity in autobidding auctions, connecting several research areas. We briefly survey the most relevant literature, referring readers to standard references for foundational concepts.
+
+\paragraph{Autobidding.} The theoretical study of autobidding was initiated by \citet{aggarwal2019autobidding}, who analyzed constrained autobidding and established foundational equilibrium concepts. \citet{aggarwal2024autobidding} provide a comprehensive survey covering equilibrium analysis, mechanism design, and learning in autobidding systems. Recent work extends to multi-channel settings \citep{deng2023multichannel} and dynamics with budget and ROI constraints \citep{lucier2024autobidders}. These works analyze autobidder behavior given fixed prediction models; our work studies how changes in model quality affect equilibrium outcomes.
+
+\paragraph{First-Price Auctions and Pacing.} The shift to first-price auctions has motivated substantial work on pacing equilibria \citep{conitzer2022pacing} and efficiency in non-truthful settings \citep{liaw2023efficiency,liaw2024efficiency}. \citet{deng2024nonuniform} empirically study bid-scaling strategies across auction formats. Our positive result for tCPA bidders under FPA connects to this literature, while our negative results highlight limitations of first-price mechanisms.
+
+\paragraph{VCG and Welfare.} The VCG mechanism \citep{vickrey1961counterspeculation,clarke1971multipart,groves1973incentives} achieves welfare-optimal allocations with dominant-strategy incentive compatibility. Our welfare monotonicity result for MAX-CPA bidders under VCG builds on these classical efficiency properties. \citet{mehta2022auction} shows that randomization can improve efficiency beyond VCG in autobidding contexts.
+
+\paragraph{Value Maximizers and Liquid Welfare.} Max-CPA bidders are a form of value maximizers \citep{wilkens2016value}. For budget-constrained settings, liquid welfare \citep{dobzinski2014liquidwelfare} provides an appropriate efficiency benchmark; \citet{colini2026liquid} study optimal liquid welfare guarantees for autobidding agents with budgets. Our negative results for budget-constrained settings show that even liquid welfare fails to be monotonic.
+
+\paragraph{Prediction Models in Advertising.} \citet{vasile2017cost} observe that prediction accuracy may not align with business objectives due to downstream auction effects---a theme central to our work. While prior work focuses on learning better predictions or bidding strategies \citep{ma2018entire,cai2017real}, we study when improving predictions actually improves platform outcomes.
+
+\paragraph{Positioning.} To our knowledge, this is the first work to formally study when prediction model improvements guarantee platform metric improvements in autobidding settings. Our key finding---that monotonicity holds only in a small set of specific cases---provides theoretical foundations for understanding the complex dynamics of model deployment in advertising platforms.

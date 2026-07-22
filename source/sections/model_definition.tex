@@ -1,0 +1,112 @@
+% Model Definition and Problem Setting - Condensed
+
+\section{Model Definition and Problem Setting}
+\label{sec:model}
+
+We formalize the problem setting for studying the interaction between prediction model quality and platform-level outcomes in autobidding auctions. Our framework draws on concepts from probability theory, specifically filtrations and refinements~\citep{hardy1952inequalities,durrett2019probability}.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Problem Setting}
+\label{subsec:problem_setting}
+
+We consider an online advertising platform that hosts auctions to display advertisements to users. Let $\cU$ denote the \emph{user universe}, a finite set of users. Each user $u \in \cU$ and advertiser $i \in \cA$ are associated with true (unobservable) behavioral parameters $\mathrm{ctr}_i(u), \mathrm{cvr}_i(u) \in [0,1]$ representing click-through and conversion rates for that advertiser--user pair.
+
+A set of advertisers $\cA = \{1, \ldots, n\}$ compete for ad slots, each with private value $v_i \in \R_{\geq 0}$ per conversion and constraints such as target CPA ($\tcpa$) or maximum CPA. Advertisers employ \emph{autobidding} systems~\citep{aggarwal2019autobidding,aggarwal2024autobidding} that automatically determine bids based on the platform's predicted values $\pctr(u)$ and $\pcvr(u)$.
+
+\begin{assumption}[Value Equals Target for tCPA Bidders]
+\label{assumption:value_equals_target}
+For target CPA (tCPA) bidders, we assume the per-conversion value $v_i$ equals the target $t_i$. This ensures that, without budget constraints and under first-price auctions with multiplier $\mu_i = 1$, welfare equals revenue for tCPA bidders, since the expected value $v_i \cdot p_{i,C}$ equals the target payment $t_i \cdot p_{i,C}$.
+\end{assumption}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Prediction Models}
+\label{subsec:prediction_models}
+
+We formalize prediction models using a partition-based framework that captures prediction granularity.
+
+\begin{definition}[User Partition]
+\label{def:partition}
+A \emph{partition} of $\cU$ is a collection $\cP = \{C_1, \ldots, C_k\}$ of non-empty, pairwise disjoint subsets with $\bigcup_{j=1}^{k} C_j = \cU$. For each cluster $C \in \cP$, we define its \emph{weight} $w_C \coloneqq |C|/|\cU|$, representing the probability mass (or relative size) of cluster $C$ under the uniform user distribution.
+\end{definition}
+
+\begin{definition}[Prediction Model]
+\label{def:prediction_model}
+A \emph{prediction model} $\cM$ is defined by a partition $\cP_\cM$ of $\cU$. For each advertiser $i \in \cA$ and cluster $C \in \cP_\cM$, the model outputs the \emph{predicted conversion probability}:
+\begin{equation}
+\label{eq:p_iC_def}
+p_{i,C} \coloneqq \frac{1}{|C|} \sum_{u \in C} p_i(u),
+\end{equation}
+where $p_i(u) = \mathrm{ctr}_i(u) \cdot \mathrm{cvr}_i(u)$ is the true conversion probability for advertiser $i$ and user $u$. This quantity $p_{i,C}$ is the primitive used in all auction analysis: bidders bid based on $p_{i,C}$, and all theoretical results in this paper are stated in terms of $p_{i,C}$.
+\end{definition}
+
+This definition captures the intuition that a prediction model groups users into clusters and assigns the same predicted conversion probability to all users within a cluster. The model is \emph{calibrated}: predictions equal true cluster averages~\citep{ma2018entire,gneiting2007probabilistic}. Crucially, this paper studies the effect of \emph{refining a perfectly calibrated information structure} rather than the effect of stochastic prediction error or miscalibration. (See \Cref{app:implementation} for implementation details.)
+
+\begin{example}[Extreme Models]
+\label{ex:extreme_models}
+The \emph{coarsest model} $\cP = \{\cU\}$ predicts a single global average: $p_{i,\cU} = \frac{1}{|\cU|} \sum_{u \in \cU} p_i(u)$ for all advertisers $i$. The \emph{finest model} $\cP = \{\{u\} : u \in \cU\}$ predicts exact advertiser-specific conversion probabilities: $p_{i,\{u\}} = p_i(u)$ for each user $u$ and advertiser $i$.
+\end{example}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Model Refinement}
+\label{subsec:model_refinement}
+
+We define when one prediction model is ``better'' than another, inspired by filtrations in probability theory~\citep{durrett2019probability}. Unlike pointwise metrics (log-likelihood, AUC), model refinement provides a partial order under which proper scoring losses improve in expectation for calibrated nested partitions, enabling provable guarantees.
+
+\begin{definition}[Model Refinement]
+\label{def:model_refinement}
+A prediction model $\cM_A$ \emph{refines} model $\cM_B$ (written $\cM_A \succeq \cM_B$) if every cluster in $\cP_{\cM_A}$ is contained in some cluster of $\cP_{\cM_B}$. We say that $\cM_A$ is \emph{finer} and $\cM_B$ is \emph{coarser}.
+\end{definition}
+
+This captures feature-set refinements: for example, a model segmenting users by \{age, location\} induces a coarser partition than a model that additionally uses \{browsing history\}, provided the added feature only splits existing clusters.
+
+The refinement relation forms a partial order (reflexivity, transitivity, antisymmetry follow from standard set theory). In probability theory, a finer partition corresponds to a finer $\sigma$-algebra, capturing the idea that a finer model has access to more discriminative information.
+
+The refinement definition captures a strong notion of model improvement: if $\cM_A \succeq \cM_B$, then for any advertiser $i$ and any concave Bayes risk $H$ associated with a proper scoring loss,
+\[
+\sum_{C \in \cP_{\cM_A}} w_C H(p_{i,C}) \leq \sum_{C \in \cP_{\cM_B}} w_C H(p_{i,C}).
+\]
+This follows from Jensen's inequality because each coarse prediction is the weighted average of the refined predictions within that coarse cluster. Thus refinement improves all proper scoring losses in their loss orientation~\citep{gneiting2007probabilistic}.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Evaluation Criteria Metric (ECM)}
+\label{subsec:ecm}
+
+\begin{definition}[Evaluation Criteria Metric]
+\label{def:ecm}
+An \emph{Evaluation Criteria Metric} ($\ecm$) aggregates auction outcomes. For a model $\cM$, let $x_i(u; \cM) \in \{0, 1\}$ denote the allocation and $\pi_i(u; \cM) \geq 0$ the payment for advertiser $i$ on user $u$. We consider:
+\begin{itemize}
+    \item \textbf{Revenue:} $\mathrm{Revenue}(\cM) \coloneqq \sum_{u \in \cU} \sum_{i \in \cA} \pi_i(u; \cM)$
+    \item \textbf{Welfare:} $\mathrm{Welfare}(\cM) \coloneqq \sum_{u \in \cU} \sum_{i \in \cA} x_i(u; \cM) \cdot v_i \cdot p_{i,u}$
+    \item \textbf{Liquid Welfare:} $\mathrm{LiquidWelfare}(\cM) \coloneqq \sum_{i \in \cA} \min\left( B_i, \sum_{u} x_i(u; \cM) \cdot v_i \cdot p_{i,u} \right)$
+\end{itemize}
+Here $p_{i,u}$ denotes the true conversion probability for advertiser $i$ and user $u$, and $B_i$ is advertiser $i$'s budget~\citep{dobzinski2014liquidwelfare}. In proofs, we write metrics as weighted sums over clusters (see \Cref{app:implementation}).
+\end{definition}
+
+For each setting, let $\Phi_{\text{setting}}(\cM)$ denote the outcome mapping that selects allocations and payments induced by model $\cM$ under that setting's behavioral convention.
+
+\begin{definition}[ECM Monotonicity]
+\label{def:ecm_monotonicity}
+An $\ecm$ is \emph{monotone} with respect to model refinement for a given auction format and bidder type if, for all models $\cM_A, \cM_B$ with $\cM_A \succeq \cM_B$:
+$\ecm(\Phi_{\text{setting}}(\cM_A)) \geq \ecm(\Phi_{\text{setting}}(\cM_B))$,
+where the $\ecm$ is evaluated on the allocations and payments selected by the outcome mapping for that setting (see \Cref{ass:equilibrium}).
+\end{definition}
+
+\begin{remark}[Setting-Dependent Outcome Mappings]
+\label{rem:outcome-mapping}
+The outcome mapping $\Phi_{\text{setting}}: \cM \to (\text{allocations}, \text{payments})$ varies by setting. For tCPA settings, $\Phi$ selects equilibrium outcomes under the binding-constraint convention. For MAX-CPA FPA, $\Phi$ compares designated feasible multiplier profiles across models without claiming a full equilibrium characterization. Our characterization in \Cref{tab:monotonicity} is thus a taxonomy of $\Phi$-monotonicity results across these conventions. This heterogeneity reflects the different behavioral assumptions appropriate to each setting.
+\end{remark}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Central Question}
+\label{subsec:main_question}
+
+We study which combinations of (auction format, bidder type, ECM) exhibit monotonicity:
+\begin{itemize}
+    \item \textbf{Auction formats:} First-price (FPA), VCG mechanism (equivalent to SPA for single-item auctions).
+    \item \textbf{Bidder types:} Target CPA ($\tcpa$) and Maximum CPA (max-CPA).
+    \item \textbf{Budget constraints:} Present or absent.
+\end{itemize}
+
+\emph{Central Question:} For which combinations is the ECM monotone with respect to model refinement?
+
+A positive answer ensures that better models lead to better outcomes. A negative answer reveals misalignment: improving predictions can paradoxically hurt platform objectives. We provide a systematic characterization in \Cref{sec:results}, with proofs for positive results and numerical constructions for non-monotonicity results.

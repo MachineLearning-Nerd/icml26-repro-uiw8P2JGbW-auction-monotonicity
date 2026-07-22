@@ -1,0 +1,540 @@
+%%%%%%%% ICML 2026 PAPER: Model Monotonicity in Autobidding Auctions %%%%%%%%%%%%%%%%%
+
+\documentclass{article}
+
+% Recommended, but optional, packages for figures and better typesetting:
+\usepackage{microtype}
+\usepackage{graphicx}
+\usepackage{subcaption}
+\usepackage{booktabs} % for professional tables
+
+% hyperref makes hyperlinks in the resulting PDF.
+\usepackage{hyperref}
+
+% Attempt to make hyperref and algorithmic work together better:
+\newcommand{\theHalgorithm}{\arabic{algorithm}}
+
+% Camera-ready version for accepted papers:
+\usepackage[accepted]{icml2026}
+
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{mathtools}
+\usepackage{amsthm}
+
+% if you use cleveref..
+\usepackage[capitalize,noabbrev]{cleveref}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% THEOREMS
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\theoremstyle{plain}
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{corollary}[theorem]{Corollary}
+\theoremstyle{definition}
+\newtheorem{definition}[theorem]{Definition}
+\newtheorem{assumption}[theorem]{Assumption}
+\newtheorem{example}[theorem]{Example}
+\theoremstyle{remark}
+\newtheorem{remark}[theorem]{Remark}
+
+% Custom commands
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\E}{\mathbb{E}}
+\newcommand{\Prob}{\mathbb{P}}
+\newcommand{\cA}{\mathcal{A}}
+\newcommand{\cB}{\mathcal{B}}
+\newcommand{\cM}{\mathcal{M}}
+\newcommand{\cU}{\mathcal{U}}
+\newcommand{\cP}{\mathcal{P}}
+\newcommand{\pctr}{\text{pCTR}}
+\newcommand{\pcvr}{\text{pCVR}}
+\newcommand{\tcpa}{\text{tCPA}}
+\newcommand{\ecm}{\text{ECM}}
+
+% The \icmltitle you define below is probably too long as a header.
+% Therefore, a short form for the running title is supplied here:
+\icmltitlerunning{Model Monotonicity in Autobidding Auctions}
+
+\begin{document}
+
+\twocolumn[
+  \icmltitle{Model Monotonicity in Autobidding Auctions: \texorpdfstring{\\}{ } When Do Better Predictions Lead to Better Outcomes?}
+
+  \begin{icmlauthorlist}
+    \icmlauthor{Ashwinkumar Badanidiyuru}{uber}
+  \end{icmlauthorlist}
+
+  \icmlaffiliation{uber}{Uber Technologies, Inc., San Francisco, CA, USA}
+  \icmlcorrespondingauthor{Ashwinkumar Badanidiyuru}{ashwinkumarbv@uber.com}
+
+  \icmlkeywords{Auctions, Autobidding, Machine Learning, Recommender Systems, Online Advertising}
+
+  \vskip 0.3in
+]
+
+\printAffiliationsAndNotice{}
+
+\begin{abstract}
+Online advertising platforms rely on machine learning models to predict click-through rates (pCTR) and conversion rates (pCVR) for auction mechanisms. We introduce a novel framework to study the interaction between recommender system model quality, auction format, and autobidder behavior. We formalize when model improvements---defined via a refinement relation inspired by filtrations in probability theory---lead to improvements in platform-level Evaluation Criteria Metrics (ECM) such as revenue, welfare, or liquid welfare. Our main contributions are: (1) a formal definition of model improvement based on cluster refinement, and (2) a systematic characterization of ECM monotonicity across different combinations of bidder types (tCPA, max-CPA), auction formats (first-price, second-price, VCG), and budget constraints. We show that first-price auctions with uniform bidding guarantee revenue monotonicity for tCPA bidders without budgets (via Jensen's inequality), while second-price auctions and budget constraints can break this property. We provide full numerical constructions for the non-monotonicity results. Our findings have practical implications for advertising platforms seeking to align model improvements with business outcomes.
+\end{abstract}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% INTRODUCTION
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\input{sections/introduction}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% RELATED WORK
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\input{sections/related_work}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% MODEL DEFINITION AND PROBLEM SETTING
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\input{sections/model_definition}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% AUCTION THEORY AND BIDDER MODELS
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\input{sections/auction_theory}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% MAIN RESULTS
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\input{sections/main_results}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% COUNTEREXAMPLES
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\input{sections/counterexamples}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% CONCLUSION
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\input{sections/conclusion}
+
+\newpage
+\section*{Acknowledgements}
+The author thanks the anonymous reviewers for their helpful feedback.
+
+\section*{Impact Statement}
+This paper presents work whose goal is to advance the understanding of interactions between machine learning models, auction mechanisms, and automated bidding systems in online advertising. While our results are theoretical and do not propose a deployed system, they have potential implications for advertising platform design. More informative prediction models can improve allocation quality, but can also enable finer targeting, alter competitive pressure among advertisers, and interact with budget constraints in ways that affect market concentration and access to impressions. These effects may also raise fairness and privacy concerns when refined prediction models rely on sensitive or highly granular user features. Our results therefore support careful system-level validation of model changes rather than evaluating prediction quality in isolation.
+
+\bibliography{references}
+\bibliographystyle{icml2026}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% APPENDIX
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newpage
+\appendix
+\onecolumn
+
+\section{Proofs of Main Positive Results}
+\label{app:proofs}
+
+This appendix contains complete proofs of the two main positive theorems for the strategic auction settings stated in \Cref{sec:results} (the LP benchmark proof appears in \Cref{app:lp-mono}). Both proofs rely on Jensen's inequality applied to convex functions~\citep{hardy1952inequalities}.
+
+\subsection{Implementation Notes and Additional Remarks}
+\label{app:implementation}
+
+\textbf{pCTR/pCVR Implementation.} In practice, platforms may predict CTR and CVR separately: $\pctr_\cM(u) \coloneqq \frac{1}{|C|} \sum_{u' \in C} \mathrm{ctr}(u')$ and $\pcvr_\cM(u) \coloneqq \frac{1}{|C|} \sum_{u' \in C} \mathrm{cvr}(u')$. However, our analysis uses only the cluster-averaged conversion probability $p_{i,C}$. The product of cluster-averaged CTR and CVR does not generally equal $p_{i,C}$.
+
+\textbf{Per-User vs.\ Per-Cluster Notation.} ECM definitions sum over users $u \in \cU$. In proofs, we equivalently write metrics as weighted sums over clusters: $\mathrm{Revenue}(\cM) = \sum_{C \in \cP} w_C \cdot \mathrm{Rev}(C)$ where $w_C = |C|/|\cU|$. Since all users in a cluster receive identical bids and allocations, per-user sums reduce to per-cluster weighted sums.
+
+\textbf{Tie-Breaking.} Ties are broken by advertiser index (lowest index wins). This deterministic rule ensures well-defined allocations and is standard in mechanism design~\citep{krishna2009auction}.
+
+\subsection{Proof of \Cref{thm:fpa-revenue} (FPA Revenue Monotonicity for tCPA)}
+
+\begin{proof}
+Consider tCPA bidders without budget constraints using uniform bidding with optimal multiplier $\mu_i = 1$. Each bidder $i$ bids:
+\begin{equation}
+b_i(C) = t_i \cdot p_{i,C}
+\end{equation}
+where $t_i$ is the target CPA and $p_{i,C}$ is the predicted conversion probability in cluster $C$.
+
+In a first-price auction, the winner pays their bid, so revenue from cluster $C$ is:
+\begin{equation}
+\text{Rev}(C) = \max_{i \in \cA} b_i(C) = \max_{i \in \cA} t_i \cdot p_{i,C}.
+\end{equation}
+
+Total expected revenue under model $\cM$ with partition $\cP$ is:
+\begin{equation}
+\text{Rev}(\cM) = \sum_{C \in \cP} w_C \cdot \max_{i \in \cA} t_i \cdot p_{i,C}.
+\end{equation}
+
+Now suppose $\cM_A \succeq \cM_B$, meaning the partition $\cP_A$ refines $\cP_B$. For each cluster $C^B \in \cP_B$, there exist sub-clusters $\{C^A_1, \ldots, C^A_k\} \subseteq \cP_A$ that partition $C^B$. By the definition of refinement and calibration:
+\begin{align}
+\sum_{j=1}^{k} w_{C^A_j} &= w_{C^B}, \\
+\sum_{j=1}^{k} w_{C^A_j} \cdot p_{i, C^A_j} &= w_{C^B} \cdot p_{i, C^B} \quad \forall i \in \cA.
+\end{align}
+
+Define $\lambda_j = w_{C^A_j} / w_{C^B}$, so $\sum_j \lambda_j = 1$ and $\sum_j \lambda_j p_{i, C^A_j} = p_{i, C^B}$.
+
+Define the function $f: \R^n \to \R$ by $f(p_1, \ldots, p_n) = \max_{i} t_i \cdot p_i$. This function is convex as the pointwise maximum of linear functions.
+
+By Jensen's inequality applied to the convex function $f$:
+\begin{align}
+\sum_{j=1}^{k} \lambda_j \cdot f(p_{1, C^A_j}, \ldots, p_{n, C^A_j}) &\geq f\left(\sum_{j=1}^{k} \lambda_j p_{1, C^A_j}, \ldots, \sum_{j=1}^{k} \lambda_j p_{n, C^A_j}\right) \\
+&= f(p_{1, C^B}, \ldots, p_{n, C^B}) = \max_{i} t_i \cdot p_{i, C^B}.
+\end{align}
+
+Therefore:
+\begin{equation}
+\sum_{j=1}^{k} w_{C^A_j} \cdot \max_{i} t_i \cdot p_{i, C^A_j} \geq w_{C^B} \cdot \max_{i} t_i \cdot p_{i, C^B}.
+\end{equation}
+
+Summing over all clusters $C^B \in \cP_B$:
+\begin{equation}
+\text{Rev}(\cM_A) \geq \text{Rev}(\cM_B).
+\end{equation}
+\end{proof}
+
+\subsection{Proof of \Cref{thm:vcg-welfare} (VCG Welfare Monotonicity for MAX-CPA)}
+
+\begin{proof}
+Under VCG, the mechanism allocates to maximize welfare. In each cluster $C$, the allocation is:
+\begin{equation}
+i^*(C) = \arg\max_{i \in \cA} v_i \cdot p_{i,C}
+\end{equation}
+where $v_i$ is bidder $i$'s value per conversion. The welfare from cluster $C$ is:
+\begin{equation}
+W(C) = \max_{i \in \cA} v_i \cdot p_{i,C}.
+\end{equation}
+
+Total welfare under model $\cM$ with partition $\cP$ is:
+\begin{equation}
+\text{Welfare}(\cM) = \sum_{C \in \cP} w_C \cdot \max_{i} v_i \cdot p_{i,C}.
+\end{equation}
+
+This expression has identical structure to FPA revenue in \Cref{thm:fpa-revenue}, with $v_i$ replacing $t_i$. The function $g(p) = \max_i v_i \cdot p_i$ is convex (pointwise maximum of linear functions).
+
+By the identical Jensen's inequality argument as in the proof of \Cref{thm:fpa-revenue}:
+\begin{equation}
+\text{Welfare}(\cM_A) \geq \text{Welfare}(\cM_B)
+\end{equation}
+whenever $\cM_A \succeq \cM_B$.
+\end{proof}
+
+\section{Counterexample Details}
+\label{app:counterexamples}
+
+This appendix provides detailed calculations for the counterexamples in \Cref{sec:counterexamples}.
+
+\subsection{VCG/SPA Revenue and Welfare Non-Monotonicity for tCPA}
+\label{app:counter-vcg-tcpa}
+
+For single-item auctions, VCG and SPA are equivalent mechanisms (see \Cref{rem:spa-vcg-equiv}). We provide a counterexample demonstrating that \emph{both} revenue and welfare can decrease under refinement.
+
+\textbf{Setup:} Four auctions $u \in \{0,1,2,3\}$ (one impression each). Two tCPA bidders $A, B$ with targets $t_A = 10$, $t_B = 1$. Uniform tCPA bidding: each bidder chooses a scalar goal $g_j$ and bids $b_{u,j} = g_j \cdot \hat{p}_{u,j}$ where $\hat{p}$ is the platform's prediction.
+
+\textbf{True conversion probabilities:}
+\begin{center}
+\begin{tabular}{lcccc}
+\toprule
+& Auction 0 & Auction 1 & Auction 2 & Auction 3 \\
+\midrule
+Bidder $A$ & 0.20 & 0.05 & 0.01 & 0.01 \\
+Bidder $B$ & 0.08 & 0.30 & 0.03 & 0.70 \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\textbf{Model B (Coarse):} Partition $\{\{0,1\}, \{2,3\}\}$. Predictions are cluster averages:
+\begin{align}
+\text{Cluster } \{0,1\}: \quad &\hat{p}_A = (0.20+0.05)/2 = 0.125, \quad \hat{p}_B = (0.08+0.30)/2 = 0.19 \\
+\text{Cluster } \{2,3\}: \quad &\hat{p}_A = (0.01+0.01)/2 = 0.01, \quad \hat{p}_B = (0.03+0.70)/2 = 0.365
+\end{align}
+
+\textbf{Equilibrium (both at tCPA):} Bidders choose uniform multipliers to maximize expected conversions subject to expected CPA $\leq t_i$, taking others' multipliers as given. In SPA, any multipliers in an interval preserve the allocation; we exhibit an equilibrium with both CPA constraints binding to make the welfare and revenue calculations transparent. The following multipliers constitute such an equilibrium: $A$ wins $\{0,1\}$, $B$ wins $\{2,3\}$:
+\begin{align}
+g_B &= \frac{t_A \cdot (p_{0,A} + p_{1,A})}{\hat{p}_{0,B} + \hat{p}_{1,B}} = \frac{10 \times 0.25}{0.38} = 6.579 \\
+g_A &= \frac{t_B \cdot (p_{2,B} + p_{3,B})}{\hat{p}_{2,A} + \hat{p}_{3,A}} = \frac{1 \times 0.73}{0.02} = 36.5
+\end{align}
+
+\textbf{Best-response verification:} Each bidder's multiplier is set so their CPA constraint binds exactly. Increasing the multiplier would cause the bidder to win additional auctions where their cost-per-conversion exceeds their target, violating feasibility. For each bidder, the best-response \emph{set} includes all multipliers that preserve the same winning set while satisfying the CPA constraint; among these, we select the CPA-binding multiplier as a canonical equilibrium. Other equilibria with the same allocation exist within these intervals.
+
+\textbf{Verification:} Bids in $\{0,1\}$: $b_A = 36.5 \times 0.125 = 4.56$, $b_B = 6.579 \times 0.19 = 1.25$ ($A$ wins). Bids in $\{2,3\}$: $b_A = 0.365$, $b_B = 2.40$ ($B$ wins). Both CPAs bind: $A$ pays $2.50$ for $0.25$ conversions (CPA $= 10 = t_A$); $B$ pays $0.73$ for $0.73$ conversions (CPA $= 1 = t_B$).
+\begin{align}
+\text{Rev}(\cM_B) &= 2.50 + 0.73 = 3.23 \\
+\text{Welfare}(\cM_B) &= t_A \cdot 0.25 + t_B \cdot 0.73 = 2.50 + 0.73 = 3.23
+\end{align}
+
+\textbf{Model A (Fine):} Partition into singletons $\{\{0\}, \{1\}, \{2\}, \{3\}\}$, so $\hat{p}_{i,j} = p_{i,j}$.
+
+\textbf{Equilibrium (both at tCPA):} Allocation: $A$ wins only $\{0\}$, $B$ wins $\{1,2,3\}$. From CPA constraints:
+\begin{align}
+g_B &= \frac{t_A \cdot p_{0,A}}{\hat{p}_{0,B}} = \frac{10 \times 0.20}{0.08} = 25 \\
+g_A &= \frac{t_B \cdot (p_{1,B} + p_{2,B} + p_{3,B})}{\hat{p}_{1,A} + \hat{p}_{2,A} + \hat{p}_{3,A}} = \frac{1 \times 1.03}{0.07} = 14.71
+\end{align}
+
+\textbf{Best-response verification:} As in the coarse model, each bidder's CPA constraint binds exactly. Increasing either multiplier would cause that bidder to win additional auctions violating their CPA target. Best-response sets are intervals preserving the winning set; we select CPA-binding multipliers as canonical. The same allocation persists across all equilibria in these intervals.
+
+\textbf{Verification:} Auction 0: $b_A = 2.94$, $b_B = 2.0$ ($A$ wins). Auctions 1,2,3: $B$ wins (e.g., auction 1: $b_A = 0.74$, $b_B = 7.5$). CPAs bind: $A$ pays $2.0$ for $0.20$ conversions (CPA $= 10$); $B$ pays $1.03$ for $1.03$ conversions (CPA $= 1$).
+\begin{align}
+\text{Rev}(\cM_A) &= 2.0 + 1.03 = 3.03 \\
+\text{Welfare}(\cM_A) &= t_A \cdot 0.20 + t_B \cdot 1.03 = 2.0 + 1.03 = 3.03
+\end{align}
+
+\textbf{Non-monotonicity:} Both revenue and welfare decrease: $3.23 \to 3.03$ (6.2\% loss). Both bidders win $\geq 1$ auction and are exactly at tCPA in both conditions. Welfare decreases because refinement reallocates auction 1 (where $A$ has high value $t_A p_{1,A} = 0.5$ vs $B$'s value $t_B p_{1,B} = 0.3$) from high-$t$ bidder $A$ to low-$t$ bidder $B$.
+
+\subsection{FPA Revenue Non-Monotonicity with Budgets}
+\label{app:counter-fpa-budget}
+
+For the FPA counterexample with budget constraints (\Cref{thm:fpa-budget-nonmono}):
+
+\textbf{Setup:} Four auctions, two advertisers. First-price auction with uniform bidding: $b_i(u) = \alpha_i \cdot \hat{p}_{i,u}$.
+\begin{itemize}
+    \item Advertiser 1: Budget $B_1 = 3.185$, target $t_1 = 8.674$ (tCPA non-binding; budget binds under these multipliers).
+    \item Advertiser 2: Budget $B_2 = \infty$, target $t_2 = 1.662$.
+\end{itemize}
+
+\textbf{Budget model:} The budget $B_i$ is a deterministic ex ante constraint on total expected payment across all auctions: $\sum_{u \in \cU} x_i(u) \cdot b_i(u) \leq B_i$, where $x_i(u) \in \{0,1\}$ indicates whether advertiser $i$ wins auction $u$. No pacing or randomization is used; bidders commit to a single multiplier $\alpha_i$ applied uniformly. The budget-binding multiplier is the maximum $\alpha_i$ such that expected spend equals $B_i$ given the allocation induced by $(\alpha_1, \alpha_2)$.
+
+\textbf{True conversion probabilities:}
+\begin{center}
+\begin{tabular}{lcc}
+\toprule
+Auction & $q_1$ & $q_2$ \\
+\midrule
+1 & 0.516 & 0.559 \\
+2 & 0.027 & 0.850 \\
+3 & 0.560 & 0.617 \\
+4 & 0.555 & 0.330 \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\textbf{Model B (Coarse):} Partition $\{1,2\}, \{3,4\}$.
+\begin{align}
+\text{Predictions:} \quad & \hat{p}_{1,\{1,2\}} = 0.2715, \quad \hat{p}_{1,\{3,4\}} = 0.5575 \\
+& \hat{p}_{2,\{1,2\}} = 0.7045, \quad \hat{p}_{2,\{3,4\}} = 0.4735
+\end{align}
+Candidate multiplier profile: $\alpha_1 = 2.8565$ (budget binding), $\alpha_2 = t_2 = 1.662$.
+
+Advertiser 1's bids: $b_1(\{1,2\}) = 0.7755$, $b_1(\{3,4\}) = 1.5925$.\\
+Advertiser 2's bids: $b_2(\{1,2\}) = 1.1709$, $b_2(\{3,4\}) = 0.7870$.
+
+Winners: Advertiser 2 wins auctions 1,2; Advertiser 1 wins auctions 3,4.\\
+Revenue: $\text{Rev}(\cM_B) = 2 \times 1.1709 + 2 \times 1.5925 = 5.5268$.
+
+\textbf{Model A (Fine):} Singleton partition (predictions equal true probabilities).
+
+Candidate multiplier profile: $\alpha_1 = 1.9528$ (budget binding), $\alpha_2 = t_2 = 1.662$.
+
+Advertiser 1's bids: $b_1(1) = 1.0076$, $b_1(2) = 0.0527$, $b_1(3) = 1.0936$, $b_1(4) = 1.0838$.\\
+Advertiser 2's bids: $b_2(1) = 0.9291$, $b_2(2) = 1.4127$, $b_2(3) = 1.0255$, $b_2(4) = 0.5485$.
+
+Winners: Advertiser 1 wins auctions 1,3,4; Advertiser 2 wins auction 2.\\
+Revenue: $\text{Rev}(\cM_A) = 1.0076 + 1.4127 + 1.0936 + 1.0838 = 4.5977$.
+
+\textbf{Profile justification and best-response analysis:} In both models, Advertiser 1's budget binds, determining their multiplier by budget exhaustion. In Model B, this yields $\alpha_1 = 2.8565$ with spend $= B_1 = 3.185$. Given this $\alpha_1$, Advertiser 2's best-response \emph{set} is an interval: all $\alpha_2 \in (1.10, \infty)$ preserve winning $\{1,2\}$ (threshold: $\alpha_2 > b_1(\{1,2\})/\hat{p}_{2,\{1,2\}} \approx 1.10$). We define a canonical equilibrium selection that picks $\alpha_2 = t_2 = 1.662$---the conversion-maximizing choice that exactly binds the tCPA constraint. For Advertiser 1, we define the canonical selection as the maximal multiplier that exhausts their budget ($\alpha_1 = 2.8565$). The profile $(2.8565, 1.662)$ is one Nash equilibrium selected from the continuum of equilibria within the best-response intervals; the same selection convention applies to Model A with $\alpha_1 = 1.9528$.
+
+\textbf{Result:} Revenue decreases by $(5.5268 - 4.5977)/5.5268 = 16.8\%$.
+
+\textbf{Mechanism:} Under the coarse model, Advertiser 1's low predicted probability in cluster $\{1,2\}$ means they lose these auctions despite high $\alpha_1$. Under the fine model, Advertiser 1 can win auction 1 (high true probability) with a lower $\alpha_1$. The budget-constrained advertiser wins more auctions but pays less per auction, while the unconstrained advertiser loses a high-payment auction (auction 1). Net effect: total revenue decreases.
+
+\textbf{Liquid welfare calculation:} Liquid welfare is $\sum_i \min(B_i, \text{welfare}_i)$ where $\text{welfare}_i = \sum_{u \in W_i} t_i \cdot p_{i,u}$ (Advertiser $i$'s total value from won impressions $W_i$).
+
+\emph{Model B:} Advertiser 1 wins $\{3,4\}$: welfare $= 8.674 \times (0.560 + 0.555) = 9.67$, capped at $\min(3.185, 9.67) = 3.185$. Advertiser 2 wins $\{1,2\}$: welfare $= 1.662 \times (0.559 + 0.850) = 2.34$. Total: $3.185 + 2.34 = 5.53$.
+
+\emph{Model A:} Advertiser 1 wins $\{1,3,4\}$: welfare $= 8.674 \times (0.516 + 0.560 + 0.555) = 14.15$, capped at $3.185$. Advertiser 2 wins $\{2\}$: welfare $= 1.662 \times 0.850 = 1.41$. Total: $3.185 + 1.41 = 4.60$.
+
+Liquid welfare decreases by $(5.53 - 4.60)/5.53 = 16.8\%$, matching revenue. The decrease arises because model refinement lets the budget-constrained advertiser win auction 1 (displacing the unconstrained advertiser), but the budget cap prevents extracting additional value while the unconstrained advertiser loses conversions.
+
+\subsection{VCG Revenue Non-Monotonicity for MAX-CPA}
+\label{app:counter-vcg-maxcpa}
+
+For the VCG counterexample with MAX-CPA bidders (\Cref{thm:vcg-maxcpa-revenue-nonmono}):
+
+\textbf{Setup:} $v_1 = 10$, $v_2 = 8$. Segments with $w_1 = w_2 = 0.5$:
+\begin{center}
+\begin{tabular}{lcc}
+\toprule
+& $S_1$ & $S_2$ \\
+\midrule
+Bidder 1 & 0.2 & 0.6 \\
+Bidder 2 & 0.5 & 0.1 \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\textbf{Model B (Coarse):}
+\begin{align}
+v_1 p_1 &= 10 \times 0.4 = 4.0, \quad v_2 p_2 = 8 \times 0.3 = 2.4 \\
+\text{VCG payment} &= 2.4, \quad \text{Welfare} = 4.0
+\end{align}
+
+\textbf{Model A (Fine):}
+\begin{align}
+S_1: \quad v_1 p_1 &= 2.0, \quad v_2 p_2 = 4.0 \quad \Rightarrow \text{Bidder 2 wins, payment} = 2.0 \\
+S_2: \quad v_1 p_1 &= 6.0, \quad v_2 p_2 = 0.8 \quad \Rightarrow \text{Bidder 1 wins, payment} = 0.8
+\end{align}
+
+\textbf{Results:}
+\begin{align}
+\text{Rev}(\cM_A) &= 0.5 \times 2.0 + 0.5 \times 0.8 = 1.4 < 2.4 = \text{Rev}(\cM_B) \\
+\text{Welfare}(\cM_A) &= 0.5 \times 4.0 + 0.5 \times 6.0 = 5.0 > 4.0 = \text{Welfare}(\cM_B)
+\end{align}
+
+This confirms that VCG welfare is monotonic for MAX-CPA (as proven in \Cref{thm:vcg-welfare}), but revenue is non-monotonic. The revenue decrease is 41.7\%.
+
+\subsection{FPA Non-Monotonicity for MAX-CPA}
+\label{app:counter-maxcpa-fpa}
+
+We provide a numerical counterexample demonstrating that FPA with MAX-CPA bidders can exhibit non-monotonicity in both revenue and welfare under model-dependent feasible multiplier profiles (\Cref{thm:fpa-maxcpa-nonmono}). This is not a full equilibrium characterization; we report additive-regret calculations below to show that the profiles are near best responses in this instance.
+
+\textbf{Setup:} Two impression types $H$ (high-value) and $L$ (low-value) with probabilities $\Pr(H) = 0.9$ and $\Pr(L) = 0.1$. Two MAX-CPA bidders:
+
+\begin{center}
+\begin{tabular}{lccc}
+\toprule
+Advertiser & Value $v_i$ & $p_i(H)$ & $p_i(L)$ \\
+\midrule
+1 & 600 & 0.2 & 0.01 \\
+2 & 10 & 0.02 & 0.5 \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\textbf{Model B (Coarse):} The coarse model pools both impression types. Calibrated predictions:
+\begin{align}
+\hat{p}_1 &= 0.9 \times 0.2 + 0.1 \times 0.01 = 0.181 \\
+\hat{p}_2 &= 0.9 \times 0.02 + 0.1 \times 0.5 = 0.068
+\end{align}
+
+Expected values per impression: $v_1 \hat{p}_1 = 108.6$, $v_2 \hat{p}_2 = 0.68$.
+
+Under uniform bidding, consider multipliers $(g_1, g_2) = (0.68/0.181, 10) \approx (3.7569, 10)$. Bidder 1 bids $b_1 = (0.68/0.181) \times 0.181 = 0.68$ and Bidder 2 bids $b_2 = 10 \times 0.068 = 0.68$. With ties broken by lowest index, Bidder 1 wins all impressions.
+
+\textbf{Revenue:} $\text{Rev}(\cM_B) = 0.68$.
+
+\textbf{Welfare:} Bidder 1 captures all value: $\text{Welfare}(\cM_B) = v_1 \hat{p}_1 = 108.6$.
+
+\textbf{Model A (Fine):} The fine model distinguishes $H$ and $L$ impressions.
+
+In segment $H$: $v_1 p_1(H) = 600 \times 0.2 = 120$, $v_2 p_2(H) = 10 \times 0.02 = 0.2$.\\
+In segment $L$: $v_1 p_1(L) = 600 \times 0.01 = 6$, $v_2 p_2(L) = 10 \times 0.5 = 5$.
+
+Under the fine model, consider the multiplier profile $(g_1, g_2) = (1, 1)$.
+
+\textbf{Profile justification:} With $(g_1, g_2) = (1, 1)$: Bidder 1's bid in $H$ is $0.2 > 0.02$ (Bidder 2's bid), so Bidder 1 wins $H$; Bidder 2's bid in $L$ is $0.5 > 0.01$ (Bidder 1's bid), so Bidder 2 wins $L$. Other multiplier profiles also preserve this allocation whenever the ratio satisfies $0.1 < g_1/g_2 < 50$. As stated in \Cref{ass:equilibrium}, MAX-CPA FPA counterexamples use designated feasible multipliers without full equilibrium claims; non-monotonicity arises because different information structures can induce different shading profiles.
+
+With these multipliers:
+
+Segment $H$: $b_1(H) = 1 \times 0.2 = 0.2$, $b_2(H) = 1 \times 0.02 = 0.02$. Bidder 1 wins.\\
+Segment $L$: $b_1(L) = 1 \times 0.01 = 0.01$, $b_2(L) = 1 \times 0.5 = 0.5$. Bidder 2 wins.
+
+\textbf{Revenue:}
+\begin{equation}
+\text{Rev}(\cM_A) = 0.9 \times 0.2 + 0.1 \times 0.5 = 0.18 + 0.05 = 0.23
+\end{equation}
+
+\textbf{Welfare:}
+\begin{equation}
+\text{Welfare}(\cM_A) = 0.9 \times 120 + 0.1 \times 5 = 108 + 0.5 = 108.5
+\end{equation}
+
+\textbf{Results:}
+\begin{align}
+\text{Revenue decrease:} \quad & \frac{0.68 - 0.23}{0.68} = 66.2\% \\
+\text{Welfare decrease:} \quad & \frac{108.6 - 108.5}{108.6} = 0.09\%
+\end{align}
+
+\textbf{Additive-regret calculation.} In the coarse model, $(g_1, g_2) = (0.68/0.181,10)$ is a threshold best-response profile under the stated tie-breaking rule: Bidder 1 wins all impressions at the lowest bid that ties Bidder 2, and Bidder 2 would obtain non-positive surplus by outbidding. In the fine model, $(g_1,g_2)=(1,1)$ is not an exact Nash equilibrium. However, its additive best-response regrets are small in the scale of the instance. Bidder 1's utility is $0.9(120-0.2)=107.82$; by lowering $g_1$ to just above $0.1$, Bidder 1 still wins $H$ and obtains utility approaching $0.9(120-0.02)=107.982$, a gain of at most $0.162$. Bidder 2's utility is $0.1(5-0.5)=0.45$; by lowering $g_2$ to just above $0.02$, Bidder 2 still wins $L$ and obtains utility approaching $0.1(5-0.01)=0.499$, a gain of at most $0.049$. Thus the fine profile is an approximate best-response profile, not an exact equilibrium.
+
+\textbf{Mechanism:} The key insight is that model refinement enables \emph{market segmentation} that reduces competitive pressure. Under the coarse model, Bidder 1 faces competition across all impressions and must bid at the pooled threshold to win. Under the fine model, each segment becomes a near-monopoly in bid space: Bidder 1 dominates $H$ (bid $0.2$ vs.\ $0.02$) and Bidder 2 dominates $L$ (bid $0.5$ vs.\ $0.01$). This segmentation allows both bidders to shade their bids more ($g_1 = g_2 = 1$), dramatically reducing payments. The welfare loss is minimal because the fine model still allocates efficiently within each segment; the small loss arises from Bidder 2 winning segment $L$ where Bidder 1 has slightly higher value (6 vs.\ 5).
+
+\subsection{LP Benchmark Monotonicity Proof}
+\label{app:lp-mono}
+
+This appendix provides the complete proof of \Cref{thm:lp-mono}, showing that a centralized LP allocation-and-payment benchmark guarantees revenue and welfare monotonicity under model refinement. This is not an equilibrium claim about strategic autobidders; the LP directly enforces the relevant feasibility constraints.
+
+\textbf{LP for tCPA Bidders:} For tCPA bidders, the LP maximizes total welfare subject to a surrogate-payment budget:
+\begin{align}
+\max_{x_{i,C} \geq 0} \quad & \sum_{i \in \cA} \sum_{C \in \cP} w_C \cdot x_{i,C} \cdot t_i \cdot p_{i,C} && \text{(maximize total welfare)} \\
+\text{s.t.} \quad & \sum_{C \in \cP} w_C \cdot x_{i,C} \cdot t_i \cdot p_{i,C} \leq B_i && \forall i \in \cA \text{ (budget constraint: spend} \leq B_i\text{)} \\
+& \sum_{i \in \cA} x_{i,C} \leq 1 && \forall C \in \cP \text{ (supply constraint)} \\
+& x_{i,C} \in [0,1] && \forall i \in \cA, C \in \cP
+\end{align}
+Here, the LP's surrogate payment for bidder $i$ in cluster $C$ equals $t_i \cdot p_{i,C}$ per impression, matching truthful tCPA first-price payments at $\mu_i=1$.
+
+\textbf{LP for MAX-CPA Bidders:} For MAX-CPA bidders, the LP maximizes welfare subject to a value-budget/liquid-welfare feasibility constraint:
+\begin{align}
+\max_{x_{i,C} \geq 0} \quad & \sum_{i \in \cA} \sum_{C \in \cP} w_C \cdot x_{i,C} \cdot v_i \cdot p_{i,C} && \text{(maximize total welfare)} \\
+\text{s.t.} \quad & \sum_{C \in \cP} w_C \cdot x_{i,C} \cdot v_i \cdot p_{i,C} \leq B_i && \forall i \in \cA \text{ (budget constraint)} \\
+& \sum_{i \in \cA} x_{i,C} \leq 1 && \forall C \in \cP \text{ (supply constraint)} \\
+& x_{i,C} \in [0,1] && \forall i \in \cA, C \in \cP
+\end{align}
+
+\textbf{Remark (Budget semantics):} The LP result should be read as a centralized allocation-and-payment benchmark. It explicitly enforces feasibility constraints of the calibrated linear form $\sum_C w_C x_{i,C} a_i p_{i,C} \le B_i$, where $a_i$ is fixed for bidder $i$. For tCPA bidders at $\mu_i=1$, the surrogate payment $t_i p_{i,C}$ coincides with value per impression. For MAX-CPA bidders, the LP welfare result uses the analogous value-budget/liquid-welfare constraint $v_i p_{i,C}$. Strategic auction spend budgets, where actual payments depend on the auction format and other bidders' bids, are handled separately in the FPA and VCG rows of \Cref{tab:monotonicity}.
+
+\begin{proof}[Proof of \Cref{thm:lp-mono}]
+Let $x^B = \{x^B_{i,C_B}\}$ be an optimal solution for the coarse model $\cM_B$.
+
+Construct a feasible solution $x^A$ for the refined model $\cM_A$ by copying each coarse allocation fraction to every sub-cluster: for each coarse cluster $C_B \in \cP_B$ with refined sub-clusters $\{C^A_1, \ldots, C^A_k\}$, define
+\begin{equation}
+x^A_{i,C^A_j} := x^B_{i,C_B} \quad \text{for all } i \in \cA \text{ and } j = 1, \ldots, k.
+\end{equation}
+
+\textbf{(1) Supply feasibility.} For any refined cluster $C^A_j \subseteq C_B$:
+\begin{equation}
+\sum_i x^A_{i,C^A_j} = \sum_i x^B_{i,C_B} \leq 1,
+\end{equation}
+so all refined supply constraints hold.
+
+\textbf{(2) Budget feasibility.} For any advertiser $i$:
+\begin{align}
+\sum_{C \in \cP_A} w_C \cdot x^A_{i,C} \cdot t_i \cdot p_{i,C}
+&= \sum_{C_B \in \cP_B} \sum_{j=1}^k w_{C^A_j} \cdot x^B_{i,C_B} \cdot t_i \cdot p_{i,C^A_j} \\
+&= \sum_{C_B \in \cP_B} x^B_{i,C_B} \cdot t_i \cdot \left( \sum_{j=1}^k w_{C^A_j} \cdot p_{i,C^A_j} \right).
+\end{align}
+By calibration preservation, $\sum_{j=1}^k w_{C^A_j} \cdot p_{i,C^A_j} = w_{C_B} \cdot p_{i,C_B}$. Thus:
+\begin{equation}
+= \sum_{C_B \in \cP_B} x^B_{i,C_B} \cdot t_i \cdot w_{C_B} \cdot p_{i,C_B} = \sum_{C_B \in \cP_B} w_{C_B} \cdot x^B_{i,C_B} \cdot t_i \cdot p_{i,C_B} \leq B_i.
+\end{equation}
+All budget constraints hold. (The argument is identical for MAX-CPA with $v_i$ replacing $t_i$.)
+
+\textbf{(3) Objective preservation.} The same calculation shows the refined solution achieves exactly the same objective value:
+\begin{equation}
+\sum_{C \in \cP_A} \sum_i w_C \cdot x^A_{i,C} \cdot t_i \cdot p_{i,C} = \sum_{C_B \in \cP_B} \sum_i w_{C_B} \cdot x^B_{i,C_B} \cdot t_i \cdot p_{i,C_B}.
+\end{equation}
+
+Since $x^A$ is feasible for $\cM_A$, the refined optimum cannot be smaller.
+
+\textbf{tCPA case:} With objective $\sum w_C x_{i,C} t_i p_{i,C}$:
+\begin{equation}
+\text{Rev}_{\text{LP}}(\cM_A) \geq \text{Rev}_{\text{LP}}(\cM_B).
+\end{equation}
+
+\textbf{MAX-CPA case:} With objective $\sum w_C x_{i,C} v_i p_{i,C}$ (welfare):
+\begin{equation}
+\text{Welfare}_{\text{LP}}(\cM_A) \geq \text{Welfare}_{\text{LP}}(\cM_B).
+\end{equation}
+The algebra is identical in both cases, substituting $v_i$ for $t_i$.
+\end{proof}
+
+\subsection{Notes on Liquid Welfare}
+\label{app:counter-notes}
+
+\textbf{Liquid Welfare:} The counterexample in \Cref{app:counter-maxcpa-fpa} establishes liquid welfare non-monotonicity: with sufficiently large (non-binding) budgets, liquid welfare equals standard welfare, so the 0.09\% welfare decrease applies directly. More generally, non-monotonicity can also arise via a ``crowding out'' effect where a budget-constrained high-value bidder displaces an unconstrained bidder, and the constrained bidder's capped contribution is less than the displaced bidder's full contribution.
+
+\section{Open Problems}
+\label{app:open-problems}
+
+Our work suggests several directions for future research:
+\begin{enumerate}
+    \item \emph{Approximate monotonicity}---can we bound the magnitude of monotonicity violations?
+    \item \emph{Incentive-compatible monotonic mechanisms}---do mechanisms exist that achieve both properties?
+    \item \emph{Calibration and misspecification}---how do the positive and negative results change when prediction models are imperfectly calibrated or only approximately refine one another?
+    \item \emph{Multi-slot auctions}---which monotonicity results extend to multi-slot formats such as generalized second-price or generalized first-price auctions?
+    \item \emph{Equilibrium selection}---can stronger equilibrium-based characterizations be obtained for first-price auctions with MAX-CPA bidders, where pure equilibria and selection can be delicate?
+    \item \emph{Empirical prevalence}---how often do the non-monotonic effects identified by the counterexamples arise in simulations or deployed advertising systems?
+    \item \emph{Learning dynamics}---how do model changes affect autobidder learning and convergence?
+    \item \emph{Heterogeneous populations}---what happens with mixed tCPA/MAX-CPA bidder populations?
+\end{enumerate}
+
+\end{document}

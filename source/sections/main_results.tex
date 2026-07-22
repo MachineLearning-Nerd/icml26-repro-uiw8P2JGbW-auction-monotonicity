@@ -1,0 +1,213 @@
+% Main Results - All Agents
+
+\section{Main Results}
+\label{sec:results}
+
+This section presents our main theoretical contributions: a systematic characterization of when model refinement leads to improved platform metrics. We state all positive results with proof sketches (full proofs in \Cref{app:proofs}) and reference the detailed numerical constructions in \Cref{sec:counterexamples} for non-monotonicity results.
+
+\subsection{Summary of Results}
+\label{subsec:results-summary}
+
+Our main finding is that ECM monotonicity depends critically on the interaction between three factors: (1) bidder type (tCPA vs.\ MAX-CPA), (2) auction format (FPA, SPA, VCG), and (3) presence of budget constraints. \Cref{tab:monotonicity} summarizes our systematic characterization. The table reports the auction and benchmark settings analyzed in this paper, rather than an exhaustive enumeration of every possible budgeted mechanism variant. Note that monotonicity is defined relative to a setting-dependent outcome mapping $\Phi_{\text{setting}}$; see \Cref{rem:outcome-mapping} for details on how outcomes are determined in each row.
+
+\begin{table}[t]
+\caption{Monotonicity of ECM under model refinement. \checkmark indicates monotonicity holds; $\times$ indicates a non-monotonicity construction exists; --- indicates metric not defined for this setting. Results assume uniform bidding. For budget-constrained settings, welfare refers to liquid welfare.\footnotemark}
+\label{tab:monotonicity}
+\begin{center}
+\begin{small}
+\begin{tabular}{llcc}
+\toprule
+\textbf{Bidder Type} & \textbf{Auction} & \textbf{Revenue} & \textbf{Welfare} \\
+\midrule
+tCPA & FPA & \checkmark & \checkmark \\
+tCPA & VCG (= SPA) & $\times$ & $\times$ \\
+tCPA + Budget & FPA & $\times$ & $\times$ \\
+tCPA + Budget & LP & \checkmark & \checkmark \\
+\midrule
+MAX-CPA & FPA$^\dagger$ & $\times$ & $\times$ \\
+MAX-CPA & VCG & $\times$ & \checkmark \\
+MAX-CPA + Budget & FPA$^\dagger$ & $\times$ & $\times$ \\
+MAX-CPA + Budget & LP & --- & \checkmark \\
+\bottomrule
+\end{tabular}
+\end{small}
+\end{center}
+\vskip -0.1in
+\end{table}
+\footnotetext{For unconstrained settings, welfare is standard social welfare. For budget-constrained settings, welfare refers to liquid welfare (\Cref{def:ecm}), which caps each bidder's contribution at their budget. \emph{Outcome selection:} For tCPA auction settings (rows 1--3), ECM is evaluated at equilibrium multipliers where the binding constraint (CPA or budget) determines each bidder's multiplier; when unconstrained, $\mu=1$ is used. The dagger marks the MAX-CPA FPA rows (rows 5 and 7), where ECM compares designated feasible multiplier profiles across models without a full equilibrium claim (see \Cref{ass:equilibrium}); for MAX-CPA VCG (row 6), equilibrium multipliers are used. For tCPA + Budget LP, revenue refers to surrogate first-price payments under the LP allocation.}
+
+\subsection{Positive Results: Monotonicity Guarantees}
+\label{subsec:positive-results}
+
+We begin with our positive results, establishing conditions under which model refinement provably improves platform metrics.
+
+\subsubsection{First-Price Auction with tCPA Bidders}
+
+Our first main result shows that FPA with tCPA bidders and uniform bidding satisfies revenue monotonicity.
+
+\begin{theorem}[FPA Revenue Monotonicity]
+\label{thm:fpa-revenue}
+Consider tCPA bidders without budget constraints using uniform bidding with optimal multiplier $\mu_i = 1$ in a first-price auction. If model $\cM_A$ is a refinement of model $\cM_B$ (i.e., $\cM_A \succeq \cM_B$), then:
+\begin{equation}
+\text{Rev}(\cM_A) \geq \text{Rev}(\cM_B).
+\end{equation}
+\end{theorem}
+
+\begin{proof}[Proof Sketch]
+With $\mu_i = 1$, bidder $i$ bids $b_i(C) = t_i \cdot p_{i,C}$, so revenue is $\text{Rev}(\cM) = \sum_{C \in \cP} w_C \cdot \max_i t_i \cdot p_{i,C}$. The function $f(p) = \max_i t_i \cdot p_i$ is convex. When $\cM_A$ refines $\cM_B$, each coarse cluster $C^B$ splits into sub-clusters with weights summing to $w_{C^B}$ and calibration-preserving probabilities. By Jensen's inequality applied to this convex $f$, the finer model's revenue cannot be smaller. See \Cref{app:proofs} for the complete proof.
+\end{proof}
+
+The following theorem establishes that uniform bidding with $\mu = 1$ is optimal for tCPA bidders in FPA who seek to maximize conversions subject to their tCPA constraint.
+
+\begin{theorem}[FPA Optimality for tCPA Bidders]
+\label{thm:fpa-truthful}
+For tCPA bidders without budget constraints in a first-price auction, uniform bidding with multiplier $\mu_i = 1$ (i.e., bidding $b_i = t_i \cdot p_{i,C}$) is:
+\begin{enumerate}
+    \item Optimal given the tCPA constraint: maximizes conversions while satisfying the target CPA.
+    \item Revenue-maximizing among uniform bidding equilibria: lower multipliers result in lower bids and lower revenue.
+    \item Welfare-maximizing: achieves the maximum possible social welfare.
+\end{enumerate}
+\end{theorem}
+
+\begin{proof}[Proof Sketch]
+\textbf{(1)} With $b_i(C) = \mu_i \cdot t_i \cdot p_{i,C}$, the CPA per won cluster is $\mu_i \cdot t_i$, so $\mu_i \leq 1$ is required. Since conversions increase with $\mu_i$, optimality requires $\mu_i = 1$. \textbf{(2)} At $\mu = 1$, bids are maximal under the CPA constraint. \textbf{(3)} Allocation goes to $\arg\max_i t_i \cdot p_{i,C}$, which is welfare-maximizing since value equals $t_i \cdot p_{i,C}$.
+\end{proof}
+
+\begin{corollary}[FPA Welfare Monotonicity for tCPA]
+\label{cor:fpa-welfare-tcpa}
+Under the conditions of \Cref{thm:fpa-revenue} and \Cref{assumption:value_equals_target} ($v_i=t_i$), with the optimal FPA multiplier $\mu_i=1$, welfare is also monotone: $\text{Welfare}(\cM_A) \geq \text{Welfare}(\cM_B)$.
+\end{corollary}
+
+\begin{proof}
+For tCPA bidders bidding $b_i = t_i \cdot p_{i,C}$ with $v_i=t_i$, revenue equals welfare (the winner pays exactly their expected value $v_i p_{i,C}$). Thus welfare monotonicity follows directly from revenue monotonicity.
+\end{proof}
+
+\begin{remark}[Incentive Compatibility in Autobidding (IC-ROS)]
+\label{rem:fpa-ic}
+FPA with uniform bidding is \emph{incentive compatible with respect to return-on-spend constraints} (IC-ROS) in the terminology of~\citet{aggarwal2024autobidding}. This autobidding-specific notion of IC means that, when tCPA targets $t_i$ and budgets $B_i$ are private information but predicted conversion probabilities $p_{i,C}$ are public, each bidder's optimal strategy is to truthfully report their constraints to the autobidding system. The autobidder then bids $b_i = \mu_i \cdot t_i \cdot p_{i,C}$, maximizing conversions subject to the reported constraints. This differs from classical dominant-strategy incentive compatibility (DSIC), which applies to quasi-linear utilities; tCPA bidders have non-linear objectives (conversion maximization subject to cost constraints).
+\end{remark}
+
+\subsubsection{VCG Mechanism with MAX-CPA Bidders}
+
+The VCG mechanism provides welfare monotonicity guarantees specifically for MAX-CPA bidders.
+
+\begin{theorem}[VCG Welfare Monotonicity for MAX-CPA]
+\label{thm:vcg-welfare}
+Consider MAX-CPA bidders without budget constraints. Under the VCG mechanism, if $\cM_A \succeq \cM_B$, then:
+\begin{equation}
+\text{Welfare}(\cM_A) \geq \text{Welfare}(\cM_B).
+\end{equation}
+\end{theorem}
+
+\begin{proof}[Proof Sketch]
+VCG allocates to maximize welfare, and truthful bidding ($\mu_i = 1$) is dominant for MAX-CPA bidders. Welfare is $\text{Welfare}(\cM) = \sum_{C \in \cP} w_C \cdot \max_i v_i \cdot p_{i,C}$, which has identical structure to FPA revenue with $v_i$ replacing $t_i$. By the same Jensen argument (since $\max_i v_i \cdot p_i$ is convex), refinement cannot decrease welfare.
+\end{proof}
+
+\begin{remark}[VCG Revenue Non-Monotonicity]
+VCG revenue monotonicity does \emph{not} hold for MAX-CPA bidders. VCG payments depend on the externality imposed on other bidders, which can increase or decrease under model refinement. See \Cref{app:counter-vcg-maxcpa} for a counterexample.
+\end{remark}
+
+\begin{remark}[VCG with tCPA Bidders]
+For tCPA bidders, VCG provides monotonicity for \emph{neither} revenue nor welfare. The issue is that tCPA bidders do not have fixed per-conversion values---their effective value depends on the tCPA constraint binding status across clusters. Model refinement can change which clusters are binding, leading to non-monotonic outcomes. See \Cref{app:counter-vcg-tcpa} for a counterexample.
+\end{remark}
+
+\subsection{Negative Results: Non-Monotonicity}
+\label{subsec:negative-results}
+
+We now state our negative results. Detailed numerical constructions are provided in \Cref{sec:counterexamples}, with full calculations in \Cref{app:counterexamples}.
+
+\subsubsection{VCG/SPA Non-Monotonicity for tCPA}
+
+\begin{theorem}[VCG/SPA Non-Monotonicity for tCPA]
+\label{thm:vcg-tcpa-nonmono}
+There exist instances with tCPA bidders where VCG (equivalently, SPA for single-item auctions) exhibits non-monotonicity in both revenue and welfare:
+\begin{align}
+\cM_A \succeq \cM_B \quad \text{but} \quad &\text{Rev}(\cM_A) < \text{Rev}(\cM_B), \\
+\cM_A \succeq \cM_B \quad \text{but} \quad &\text{Welfare}(\cM_A) < \text{Welfare}(\cM_B).
+\end{align}
+\end{theorem}
+
+The key intuition for SPA/VCG non-monotonicity is that payments depend on the \emph{second-highest} bid (the externality). Model refinement can cause the ranking of bidders to change across sub-clusters in ways that reduce competitive pressure, thereby reducing payments. For tCPA bidders specifically, the mismatch between tCPA constraints and VCG's welfare-maximizing allocation compounds this effect. See \Cref{app:counter-vcg-tcpa} for a counterexample demonstrating a 6.2\% decrease in both revenue and welfare.
+
+\begin{theorem}[VCG Revenue Non-Monotonicity for MAX-CPA]
+\label{thm:vcg-maxcpa-revenue-nonmono}
+There exist instances with MAX-CPA bidders where VCG welfare is monotone but revenue is not:
+\begin{equation}
+\cM_A \succeq \cM_B \quad \text{but} \quad \text{Rev}(\cM_A) < \text{Rev}(\cM_B).
+\end{equation}
+\end{theorem}
+
+VCG payments are externality-based: each winner pays the welfare loss they impose on others. Model refinement can reduce competition in certain clusters, decreasing externalities and thus payments. See \Cref{app:counter-vcg-maxcpa} for a counterexample.
+
+\subsubsection{Budget Constraints Break Monotonicity}
+
+\begin{theorem}[FPA with Budget Non-Monotonicity]
+\label{thm:fpa-budget-nonmono}
+There exist instances with tCPA bidders having budget constraints where model refinement decreases FPA revenue:
+\begin{equation}
+\cM_A \succeq \cM_B \quad \text{but} \quad \text{Rev}(\cM_A) < \text{Rev}(\cM_B).
+\end{equation}
+\end{theorem}
+
+With budgets, the optimal multiplier is no longer $\mu = 1$. Bidders must pace to avoid depleting their budget too quickly. Model refinement can change competitive dynamics---in particular, revealing segments where a budget-constrained bidder can win more auctions with lower bids. See \Cref{app:counter-fpa-budget} for a numerical counterexample demonstrating a 16.8\% revenue decrease.
+
+\subsubsection{LP Monotonicity with Budget Constraints}
+
+\begin{theorem}[LP Benchmark Monotonicity]
+\label{thm:lp-mono}
+Consider a centralized LP benchmark that chooses fractional allocations and surrogate payments directly, rather than modeling strategic bidder behavior in an auction. The LP explicitly enforces budget feasibility through linear constraints of the form $\sum_C w_C x_{i,C} a_i p_{i,C} \le B_i$, where $a_i$ is a bidder-specific constant (e.g., $t_i$ for tCPA surrogate payments or $v_i$ for MAX-CPA value budgets). This LP-based fractional allocation benchmark guarantees welfare monotonicity. Define:
+\begin{equation}
+\text{Welfare}_{\text{LP}}(\cM) \coloneqq \sum_{i \in \cA} \sum_{C \in \cP} w_C \cdot x^*_{i,C} \cdot v_i \cdot p_{i,C},
+\end{equation}
+where $x^* = \{x^*_{i,C}\}$ is the optimal LP solution. For tCPA bidders (where $v_i = t_i$), we additionally define:
+\begin{equation}
+\text{Rev}_{\text{LP}}(\cM) \coloneqq \sum_{i \in \cA} \sum_{C \in \cP} w_C \cdot x^*_{i,C} \cdot t_i \cdot p_{i,C}.
+\end{equation}
+Note: $\text{Rev}_{\text{LP}}$ is a \emph{surrogate metric} representing payments assigned by the LP benchmark, not equilibrium revenue from a strategic auction (see \Cref{rem:lp-ic}). For tCPA bidders at $\mu_i=1$, these surrogate payments coincide with first-price payments and $\text{Rev}_{\text{LP}} = \text{Welfare}_{\text{LP}}$ since $v_i = t_i$.
+
+If $\cM_A \succeq \cM_B$, then:
+\begin{itemize}
+    \item For tCPA or MAX-CPA bidders: $\text{Welfare}_{\text{LP}}(\cM_A) \geq \text{Welfare}_{\text{LP}}(\cM_B)$.
+    \item For tCPA bidders only: $\text{Rev}_{\text{LP}}(\cM_A) \geq \text{Rev}_{\text{LP}}(\cM_B)$.
+\end{itemize}
+\end{theorem}
+
+\begin{proof}[Proof Sketch]
+A \emph{lifting} argument: given optimal $x^B$ for $\cM_B$, construct feasible $x^A$ for $\cM_A$ by copying each allocation to all sub-clusters ($x^A_{i,C'} = x^B_{i,C}$ for $C' \subseteq C$). Calibration preservation ensures supply, budget, and objective all match. Thus the refined optimum cannot be smaller. See \Cref{app:lp-mono}.
+\end{proof}
+
+\begin{remark}[LP as a Non-Strategic Benchmark]
+\label{rem:lp-ic}
+Unlike FPA with uniform bidding (\Cref{rem:fpa-ic}), LP-based allocation is \emph{not} incentive compatible and should be interpreted as a centralized allocation-and-payment benchmark, not an equilibrium statement about rational autobidders. The platform must know each bidder's private target $t_i$ (or value $v_i$) and budget $B_i$ to solve the allocation LP, and bidders may have incentives to misreport these values. The monotonicity result is therefore about feasibility-preserving allocation under refinement: any feasible coarse LP solution can be lifted to the refined partition while preserving the LP's explicit linear constraints.
+\end{remark}
+
+\subsubsection{MAX-CPA Non-Monotonicity in FPA}
+
+\begin{theorem}[FPA Non-Monotonicity for MAX-CPA Under Designated Profiles]
+\label{thm:fpa-maxcpa-nonmono}
+There exist instances with MAX-CPA bidders in FPA and two feasible uniform-multiplier profiles (one for each model) such that both revenue and welfare decrease under model refinement:
+\begin{align}
+\cM_A \succeq \cM_B \quad \text{but} \quad &\text{Rev}(\cM_A) < \text{Rev}(\cM_B), \\
+\cM_A \succeq \cM_B \quad \text{but} \quad &\text{Welfare}(\cM_A) < \text{Welfare}(\cM_B).
+\end{align}
+\end{theorem}
+
+Unlike tCPA bidders (who optimally set $\mu = 1$ under FPA without budgets), MAX-CPA bidders strategically shade their bids, and their multipliers can differ across models. This row is not a full equilibrium characterization; it shows that once feasible multiplier profiles are allowed to vary with the information structure, the Jensen monotonicity argument no longer protects either revenue or welfare. Note that with \emph{truly fixed} multipliers across models, revenue would be monotone by the same Jensen argument as \Cref{thm:fpa-revenue}. See \Cref{app:counter-maxcpa-fpa} for a numerical counterexample demonstrating 66\% revenue loss and 0.09\% welfare loss under model refinement, together with additive-regret calculations for the displayed profiles.
+
+\subsubsection{Liquid Welfare Non-Monotonicity}
+
+\begin{theorem}[Liquid Welfare Non-Monotonicity]
+\label{thm:liquid-welfare-nonmono}
+There exist instances with MAX-CPA bidders having budgets where model refinement decreases liquid welfare:
+\begin{gather}
+\cM_A \succeq \cM_B \quad \text{but} \notag \\
+\text{LiquidWelfare}(\cM_A) < \text{LiquidWelfare}(\cM_B).
+\end{gather}
+\end{theorem}
+
+The counterexample in \Cref{app:counter-maxcpa-fpa} demonstrates this: with sufficiently large (non-binding) budgets, liquid welfare equals standard welfare, so the 0.09\% welfare decrease applies. More generally, liquid welfare non-monotonicity can also arise via a ``crowding out'' effect where a budget-constrained high-value bidder displaces an unconstrained bidder.
+
+\subsection{Discussion}
+\label{subsec:discussion}
+
+Among strategic auction mechanisms, our results reveal that monotonicity is rare: only FPA with tCPA bidders without budgets guarantees both revenue and welfare monotonicity, while VCG with MAX-CPA bidders without budgets guarantees welfare monotonicity only. Separately, the centralized LP benchmark guarantees welfare monotonicity with budgets, and for tCPA bidders also guarantees surrogate revenue monotonicity. All remaining auction settings studied exhibit non-monotonicity due to: (1) externality-based VCG payments, (2) budget-induced bid shading, or (3) tCPA-VCG misalignment. For platforms, this implies FPA with tCPA autobidders is the safest strategic auction choice, and model improvements should be validated via A/B testing rather than assumed to improve metrics.
