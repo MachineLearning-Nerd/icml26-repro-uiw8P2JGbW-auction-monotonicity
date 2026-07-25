@@ -1,0 +1,21 @@
+[project]
+name = "auction-monotonicity-repro"
+version = "0.2.0"
+description = "Independent reproduction of Model Monotonicity in Autobidding Auctions (arXiv 2605.31036, OpenReview uiw8P2JGbW)."
+requires-python = ">=3.11,<3.14"
+dependencies = [
+    "numpy>=1.26,<3.0",
+    "scipy>=1.11,<2.0",
+    "sympy>=1.12,<2.0",
+    "pytest>=7.4,<9.0",
+]
+
+[project.optional-dependencies]
+dev = []
+
+[tool.uv]
+package = false
+
+[tool.pytest.ini_options]
+testpaths = ["repro/tests"]
+addopts = "-q"

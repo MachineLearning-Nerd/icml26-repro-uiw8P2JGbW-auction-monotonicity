@@ -1,48 +1,20 @@
 {
-  "claims_passed": 6,
-  "evidence": {
-    "C1_refinement_revenue": {
-      "cases": 2000,
-      "min_jensen_gap": -1.7763568394002505e-15
-    },
-    "C2_calibration_necessity_negative_control": {
-      "min_wrong_model_gap": -6.263522500523175,
-      "negative_cases": 998
-    },
-    "C3_t_cpa_mu_one_optimality": {
-      "instances": 500,
-      "violations": 0
-    },
-    "C4_vcg_t_cpa_nonmonotonicity": {
-      "coarse": 3.23,
-      "fine": 3.03,
-      "loss_pct": 6.191950464396291
-    },
-    "C5_budgeted_fpa_nonmonotonicity": {
-      "coarse": 5.5267555,
-      "coarse_winners": [
-        1,
-        1,
-        0,
-        0
-      ],
-      "fine": 4.597716800000001,
-      "fine_winners": [
-        0,
-        1,
-        0,
-        0
-      ],
-      "loss_pct": 16.809838973336156
-    },
-    "C6_lp_lifting": {
-      "cases": 500,
-      "violations": 0
-    }
+  "claim_verdicts": {
+    "C1": "VERIFIED (symbolic Jensen + 200k-case corroboration)",
+    "C2": "VERIFIED (symbolic convexity + negative control)",
+    "C3": "VERIFIED (symbolic optimality + mu>1 infeasibility + welfare=max)",
+    "C4": "FALSIFIES monotonicity (literal counterexample 3.23->3.03, 6.2%)",
+    "C5": "FALSIFIES monotonicity (literal counterexample 5.5268->4.5977, 16.8%)",
+    "C6": "VERIFIED (symbolic lifting + 5000 LP solves, 0 violations)"
   },
+  "elapsed_s": 20.243,
   "failures": [],
-  "paper": "uiw8P2JGbW",
+  "paper": "uiw8P2JGbW (arXiv 2605.31036)",
   "pass": true,
-  "publication_gate_passed": true,
-  "tests_passed": true
+  "primary_evidence": {
+    "counterexamples": "outputs/counterexamples.json",
+    "finite_corroboration": "outputs/finite_checks.json",
+    "legacy_regression": "outputs/auction_claims.json",
+    "symbolic_proofs": "outputs/symbolic_certificates.json"
+  }
 }
