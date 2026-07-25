@@ -366,3 +366,90 @@ Full machine-readable certificates: `outputs/symbolic_certificates.json`. Key fi
   }
 }
 ```
+
+
+---
+<!-- trackio-cell
+{"type": "markdown", "id": "cell_d0500e8afba7", "created_at": "2026-07-25T11:36:31+00:00", "title": "Complete raw certificate JSON (outputs/symbolic_certificates.json)"}
+-->
+```json
+{
+  "C1_revenue_monotonicity": {
+    "claim": "C1",
+    "method": "Jensen on convex f=max_i t_i p_i over the mean-preserving refinement spread",
+    "n_bidders": 3,
+    "n_subclusters": 4,
+    "per_argmax_i_residual": [
+      "g0_0*lam0 + g0_1*lam1 + g0_2*lam2 + g0_3*lam3",
+      "g1_0*lam0 + g1_1*lam1 + g1_2*lam2 + g1_3*lam3",
+      "g2_0*lam0 + g2_1*lam1 + g2_2*lam2 + g2_3*lam3"
+    ],
+    "source": "sections/main_results.tex:48-58; main.tex:150-194 (app:proofs)",
+    "theorem": "Theorem 5.1: FPA revenue monotonicity for tCPA (mu=1)",
+    "verdict": "VERIFIED (symbolic, independent CAS)"
+  },
+  "C2_convexity": {
+    "claim": "C2",
+    "method": "pointwise maximum of affine maps p|->t_i p_i; per-i residual verified by SymPy",
+    "n_bidders": 3,
+    "per_i_residual": [
+      "alpha0*lam + beta0*oml",
+      "alpha1*lam + beta1*oml",
+      "alpha2*lam + beta2*oml"
+    ],
+    "source": "sections/main_results.tex:170-183; main.tex:177 (app:proofs)",
+    "theorem": "Theorem 5.1 mechanism: f(p)=max_i t_i p_i is convex",
+    "verdict": "VERIFIED (symbolic, independent CAS)"
+  },
+  "C3_mu_one_optimality": {
+    "claim": "C3",
+    "parts": {
+      "bid_monotone": "d(b)/d(mu) = t*p > 0 => won-set & conversions non-decreasing in mu; maximised at mu=1",
+      "corollary_5_3": "mu=1, v_i=t_i: payment = v_i p = welfare contribution => revenue monotonicity implies welfare monotonicity",
+      "feasibility": "CPA = mu*t; CPA <= t  <=>  mu <= 1  (t>0). mu>1 infeasible.",
+      "welfare_argmax": "winner = argmax_i t_i p_{i,C} = argmax_i v_i p_{i,C} (Assumption 1) => per-cluster welfare maximal"
+    },
+    "source": "sections/main_results.tex:62-83; sections/auction_theory.tex:35-42",
+    "theorem": "Theorem 5.2 + Corollary 5.3: mu=1 optimality and welfare monotonicity",
+    "verdict": "VERIFIED (symbolic, independent CAS)"
+  },
+  "C6_lp_lifting": {
+    "budget_identity": "refined spend reduces to coarse spend under calibration (verified per-i, zero residual)",
+    "calibration": "sum_j w_{C^A_j} p^A_{i,j} = w_C p^B_i (mean-preserving refinement); p^B_i solved & substituted",
+    "claim": "C6",
+    "n_bidders": 2,
+    "n_subclusters": 3,
+    "objective_identity": "refined lifted objective == coarse objective (zero residual) => refined optimum >= coarse",
+    "source": "sections/main_results.tex:156-177; main.tex:451-518 (app:lp-mono)",
+    "supply": "x^A_{i,C^A_j} := x^B_{i,C} (verbatim copy) => sum_i x^A = sum_i x^B <= 1",
+    "theorem": "Theorem 5.11: LP benchmark monotonicity via lifting",
+    "verdict": "VERIFIED (symbolic, independent CAS)"
+  },
+  "Thm5_4_vcg_welfare_monotonicity": {
+    "claim": "Thm5.4",
+    "method": "Jensen on convex f=max_i t_i p_i over the mean-preserving refinement spread",
+    "n_bidders": 3,
+    "n_subclusters": 4,
+    "note": "identical Jensen skeleton; v_i (value) replaces t_i (target)",
+    "per_argmax_i_residual": [
+      "g0_0*lam0 + g0_1*lam1 + g0_2*lam2 + g0_3*lam3",
+      "g1_0*lam0 + g1_1*lam1 + g1_2*lam2 + g1_3*lam3",
+      "g2_0*lam0 + g2_1*lam1 + g2_2*lam2 + g2_3*lam3"
+    ],
+    "source": "sections/main_results.tex:94-104; main.tex:196-220",
+    "theorem": "Theorem 5.4: VCG welfare monotonicity for MAX-CPA",
+    "verdict": "VERIFIED (symbolic, independent CAS)"
+  },
+  "lemma_pointwise_max_convex": {
+    "assumption": "lam, oml >= 0 are convex weights with lam + oml = 1 (domain assumption; residual >= 0 holds for all lam,oml >= 0)",
+    "lemma": "pointwise maximum of affine functions is convex",
+    "n_bidders_checked": 3,
+    "per_i_residual": [
+      "alpha0*lam + beta0*oml",
+      "alpha1*lam + beta1*oml",
+      "alpha2*lam + beta2*oml"
+    ],
+    "verdict": "each residual is a polynomial in non-negative atoms with non-negative coefficients => >= 0"
+  }
+}
+```

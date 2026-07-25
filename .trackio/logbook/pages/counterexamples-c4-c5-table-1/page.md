@@ -349,3 +349,95 @@ if __name__ == "__main__":
   }
 }
 ````
+
+
+---
+<!-- trackio-cell
+{"type": "markdown", "id": "cell_15a746247020", "created_at": "2026-07-25T11:36:36+00:00", "title": "Complete raw counterexample JSON (outputs/counterexamples.json)"}
+-->
+```json
+{
+  "C4_vcg_tcpa": {
+    "asserted_revenue_loss_pct": 6.2,
+    "claim": "C4",
+    "coarse_cpa_A": 10.00008,
+    "coarse_cpa_B": 1.0,
+    "coarse_revenue": 3.2300200000000006,
+    "coarse_welfare": 3.2299999999999995,
+    "coarse_winners": [
+      0,
+      0,
+      1,
+      1
+    ],
+    "fine_revenue": 3.0297,
+    "fine_welfare": 3.0299999999999994,
+    "fine_winners": [
+      0,
+      1,
+      1,
+      1
+    ],
+    "revenue_loss_pct": 6.201819183782158,
+    "source": "main.tex app:counter-vcg-tcpa; sections/counterexamples.tex",
+    "theorem": "Theorem 5.8: VCG/SPA non-monotonicity for tCPA",
+    "verdict": "FALSIFIES monotonicity",
+    "welfare_loss_pct": 6.1919504643962915
+  },
+  "C5_budgeted_fpa": {
+    "adv1_spend_coarse": 3.1849975,
+    "adv1_spend_fine": 3.1850168,
+    "asserted_revenue_loss_pct": 16.8,
+    "budget_B1": 3.185,
+    "claim": "C5",
+    "coarse_revenue": 5.5267555,
+    "coarse_winners": [
+      1,
+      1,
+      0,
+      0
+    ],
+    "fine_revenue": 4.597716800000001,
+    "fine_winners": [
+      0,
+      1,
+      0,
+      0
+    ],
+    "liquid_loss_pct": 16.810180579645433,
+    "liquid_welfare_coarse": 5.526758,
+    "liquid_welfare_fine": 4.5977,
+    "revenue_loss_pct": 16.809838973336156,
+    "source": "main.tex app:counter-fpa-budget",
+    "theorem": "Theorem 5.10: FPA with budget non-monotonicity",
+    "verdict": "FALSIFIES monotonicity"
+  },
+  "Table1_row5_7_maxcpa_fpa": {
+    "asserted_revenue_loss_pct": 66.2,
+    "asserted_welfare_loss_pct": 0.09,
+    "claim": "Table1-row5/7",
+    "coarse_revenue": 0.6800000000000002,
+    "coarse_welfare": 108.60000000000001,
+    "fine_revenue": 0.23000000000000004,
+    "fine_welfare": 108.5,
+    "revenue_loss_pct": 66.1764705882353,
+    "source": "main.tex app:counter-maxcpa-fpa",
+    "theorem": "Theorem 5.7: FPA non-monotonicity for MAX-CPA (designated profiles)",
+    "verdict": "FALSIFIES revenue & welfare monotonicity (designated profiles; near-BR)",
+    "welfare_loss_pct": 0.09208103130755849
+  },
+  "Table1_row6_vcg_maxcpa": {
+    "asserted_revenue_loss_pct": 41.7,
+    "claim": "Table1-row6",
+    "coarse_revenue": 2.4,
+    "coarse_welfare": 4.0,
+    "fine_revenue": 1.4,
+    "fine_welfare": 5.0,
+    "revenue_loss_pct": 41.66666666666667,
+    "source": "main.tex app:counter-vcg-maxcpa",
+    "theorem": "Theorem 5.6 + VCG welfare monotonicity (MAX-CPA)",
+    "verdict": "FALSIFIES revenue monotonicity; welfare monotone (consistent w/ Thm 5.4)",
+    "welfare_monotone": true
+  }
+}
+```

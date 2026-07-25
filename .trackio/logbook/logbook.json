@@ -8,7 +8,7 @@
     "icml2026-repro",
     "paper-uiw8P2JGbW"
   ],
-  "updated_at": "2026-07-25T11:35:02+00:00",
+  "updated_at": "2026-07-25T11:36:58+00:00",
   "root": {
     "slug": "index",
     "title": "Repro - Model Monotonicity in Autobidding Auctions",
@@ -51,6 +51,18 @@
         "children": []
       },
       {
+        "slug": "six-claim-verifier",
+        "title": "Six-claim verifier — Historical rejected baseline",
+        "file": "pages/six-claim-verifier/page.md",
+        "children": []
+      },
+      {
+        "slug": "tests",
+        "title": "Tests",
+        "file": "pages/tests/page.md",
+        "children": []
+      },
+      {
         "slug": "methods",
         "title": "Methods",
         "file": "pages/methods/page.md",
@@ -61,21 +73,9 @@
         "title": "Negative controls",
         "file": "pages/negative-controls/page.md",
         "children": []
-      },
-      {
-        "slug": "tests",
-        "title": "Tests",
-        "file": "pages/tests/page.md",
-        "children": []
-      },
-      {
-        "slug": "six-claim-verifier",
-        "title": "Six-claim verifier (Historical rejected baseline)",
-        "file": "pages/six-claim-verifier/page.md",
-        "children": []
       }
     ]
   },
-  "agent_view_tokens": 5381,
-  "revision": "1784979302988687000"
+  "agent_view_tokens": 24300,
+  "revision": "1784979418889571000"
 }

@@ -39,3 +39,18 @@ Every claim below has an exact contract, visible source code, inline raw numbers
 - **C4:** EXISTS tCPA instance where VCG/SPA refines yet both Rev and Welfare drop ~6.2%.
 - **C5:** EXISTS budgeted tCPA FPA instance where refinement drops revenue ~16.8%.
 - **C6:** LP benchmark welfare (and tCPA surrogate revenue) is monotone under refinement; Table 1 characterisation holds.
+
+
+---
+<!-- trackio-cell
+{"type": "markdown", "id": "cell_36f75b9357bc", "created_at": "2026-07-25T11:36:58+00:00", "title": "Limitations, deviations, and verifier failure semantics"}
+-->
+### Limitations and deviations (honest)
+- **Proof technology.** The symbolic proofs are verified by **SymPy** (a computer-algebra system), not a foundational proof assistant (Lean/Coq/Isabelle). SymPy independently verifies each algebraic identity (residual -> 0 via `simplify`) and each inequality (expression is a polynomial in declared-nonnegative atoms with non-negative coefficients). This is rigorous for the specific algebraic steps in these proofs but is not a fully foundational, kernel-checked proof. This is the single largest residual risk for full credit.
+- **Parametric generality.** The convexity/Jensen arguments hold for every finite number of bidders n; SymPy checks are instantiated for n in {2,3,4,5} but the per-i argument is identical for all n (only the index range changes). The exhaustive/200k-case numerical corroboration draws n up to 5.
+- **MAX-CPA FPA rows (5/7).** As the paper itself states (Assumption 4, app:counter-maxcpa-fpa), these use *designated feasible multiplier profiles*, not a full Nash-equilibrium characterization; additive-regret calculations show they are near-best-responses. This is faithfully reproduced, not upgraded.
+- **C3 numerical check.** Uses a single-bidder deviation framework (one bidder's mu varied, others fixed at mu=1), matching the theorem's per-bidder optimal-mu statement; it is not a full multi-bidder equilibrium search.
+
+### Verifier failure semantics
+- `repro/proofs/symbolic.py` raises `ProofError` (subclass of `AssertionError`) on any unverified step; `repro/run_all.py` collects failures and exits **non-zero** if any verifier or test fails. The publication gate (`outputs/publication_gate.json`) records `"pass": false` with the failure list in that case.
+- Counterexample functions `assert` the paper's headline percentages within tolerance; a mismatch exits non-zero.
