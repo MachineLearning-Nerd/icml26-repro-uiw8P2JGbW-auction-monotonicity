@@ -1,4 +1,13 @@
-# Six-claim verifier
+# Six-claim verifier — Historical rejected baseline
+
+> **HISTORICAL REJECTED BASELINE.** This is the original finite-instance NumPy
+> verifier that produced the 8/12 judged score. It remains here unchanged for
+> provenance. The **current** primary evidence — machine-checked symbolic proof
+> certificates for claims 1/2/3/6 and the full counterexample suite — supersedes
+> it on the pages *Symbolic proofs (C1 C2 C3 C6)* and *Counterexamples (C4 C5
+> Table 1)*. Code: `repro/src/verify_auction_claims.py` (legacy) is retained as a
+> regression check inside `repro/run_all.py`; the current verifiers live in
+> `repro/proofs/`.
 
 
 ---

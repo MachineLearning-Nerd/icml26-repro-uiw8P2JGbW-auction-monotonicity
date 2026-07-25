@@ -8,22 +8,46 @@
     "icml2026-repro",
     "paper-uiw8P2JGbW"
   ],
-  "updated_at": "2026-07-22T11:58:37+00:00",
+  "updated_at": "2026-07-25T11:35:02+00:00",
   "root": {
     "slug": "index",
     "title": "Repro - Model Monotonicity in Autobidding Auctions",
     "file": "pages/index.md",
     "children": [
       {
-        "slug": "six-claim-verifier",
-        "title": "Six-claim verifier",
-        "file": "pages/six-claim-verifier/page.md",
+        "slug": "claim-verification-summary",
+        "title": "Claim verification summary",
+        "file": "pages/claim-verification-summary/page.md",
         "children": []
       },
       {
-        "slug": "tests",
-        "title": "Tests",
-        "file": "pages/tests/page.md",
+        "slug": "symbolic-proofs-c1-c2-c3-c6",
+        "title": "Symbolic proofs (C1 C2 C3 C6)",
+        "file": "pages/symbolic-proofs-c1-c2-c3-c6/page.md",
+        "children": []
+      },
+      {
+        "slug": "counterexamples-c4-c5-table-1",
+        "title": "Counterexamples (C4 C5 Table 1)",
+        "file": "pages/counterexamples-c4-c5-table-1/page.md",
+        "children": []
+      },
+      {
+        "slug": "finite-corroboration",
+        "title": "Finite corroboration",
+        "file": "pages/finite-corroboration/page.md",
+        "children": []
+      },
+      {
+        "slug": "run-command-and-pinned-environment",
+        "title": "Run command and pinned environment",
+        "file": "pages/run-command-and-pinned-environment/page.md",
+        "children": []
+      },
+      {
+        "slug": "conclusion",
+        "title": "Conclusion",
+        "file": "pages/conclusion/page.md",
         "children": []
       },
       {
@@ -39,13 +63,19 @@
         "children": []
       },
       {
-        "slug": "conclusion",
-        "title": "Conclusion",
-        "file": "pages/conclusion/page.md",
+        "slug": "tests",
+        "title": "Tests",
+        "file": "pages/tests/page.md",
+        "children": []
+      },
+      {
+        "slug": "six-claim-verifier",
+        "title": "Six-claim verifier (Historical rejected baseline)",
+        "file": "pages/six-claim-verifier/page.md",
         "children": []
       }
     ]
   },
-  "agent_view_tokens": 753,
-  "revision": "1784721517520450894"
+  "agent_view_tokens": 5381,
+  "revision": "1784979302988687000"
 }

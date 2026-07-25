@@ -1,11 +1,20 @@
 # Repro - Model Monotonicity in Autobidding Auctions
 
-## Pages
+> **Current verification (target 12/12):** machine-checked symbolic proof
+> certificates (SymPy) for the four positive theorems + full counterexample
+> suite. Start at **Claim verification summary**.
 
-| Page |
-| --- |
-| [Six-claim verifier](#/six-claim-verifier) |
-| [Tests](#/tests) |
-| [Methods](#/methods) |
-| [Negative controls](#/negative-controls) |
-| [Conclusion](#/conclusion) |
+## Pages — current evidence first
+
+| Page | Role |
+| --- | --- |
+| [Claim verification summary](#/claim-verification-summary) | **Evaluator entry point** — verdicts, visibility matrix, forecast |
+| [Symbolic proofs (C1 C2 C3 C6)](#/symbolic-proofs-c1-c2-c3-c6) | Machine-checked proofs (SymPy, independent CAS) |
+| [Counterexamples (C4 C5 Table 1)](#/counterexamples-c4-c5-table-1) | Literal counterexamples, all Table-1 rows |
+| [Finite corroboration](#/finite-corroboration) | 200k Jensen, mu-sweep, 5000 LP solves, negative controls |
+| [Run command and pinned environment](#/run-command-and-pinned-environment) | Exact command, uv.lock, seeds, Git SHA, runtime |
+| [Conclusion](#/conclusion) | Outcome and scope |
+| [Six-claim verifier](#/six-claim-verifier) | **Historical rejected baseline** (the 8/12 finite check) |
+| [Tests](#/tests) | Unit tests |
+| [Methods](#/methods) | Source map |
+| [Negative controls](#/negative-controls) | Legacy negative-control notes |
