@@ -1,0 +1,29 @@
+{
+  "C1_C2_jensen_gap": {
+    "claim": "C1/C2",
+    "max_bidders_seen": 5,
+    "max_subclusters_seen": 6,
+    "method": "randomised Jensen gap on calibrated refinement (mean-preserving spread)",
+    "min_jensen_gap": -2.6645352591003757e-15,
+    "n_cases": 200000,
+    "negative_control_uncalibrated_violations": 100714,
+    "verdict": "min gap >= -1e-12 (convexity corroborated); negative control fails as expected"
+  },
+  "C3_mu_one_optimality": {
+    "claim": "C3",
+    "cpa_infeasible_cases_for_mu_gt_1": 713559,
+    "feasible_mu_le_1_beating_mu1_conversions": 0,
+    "method": "single-bidder mu sweep [0,2] (others at mu=1); CPA infeasibility mu>1; welfare vs per-cluster max",
+    "mu_grid": "np.linspace(0,2,81) -- includes mu>1",
+    "n_instances": 20000,
+    "verdict": "mu>1 always CPA-infeasible; no feasible mu<=1 beats mu=1 conversions; mu=1 welfare == per-cluster max",
+    "welfare_below_per_cluster_max_at_mu1": 0
+  },
+  "C6_lp_solving": {
+    "claim": "C6",
+    "method": "solve coarse vs fine LP with scipy.linprog (HiGHS); check refined >= coarse",
+    "monotonicity_violations": 0,
+    "n_instances": 5000,
+    "verdict": "refined LP optimum >= coarse for all instances (welfare monotonicity)"
+  }
+}

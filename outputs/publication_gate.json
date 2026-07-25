@@ -7,7 +7,7 @@
     "C5": "FALSIFIES monotonicity (literal counterexample 5.5268->4.5977, 16.8%)",
     "C6": "VERIFIED (symbolic lifting + 5000 LP solves, 0 violations)"
   },
-  "elapsed_s": 20.243,
+  "elapsed_s": 17.38,
   "failures": [],
   "paper": "uiw8P2JGbW (arXiv 2605.31036)",
   "pass": true,
