@@ -32,6 +32,7 @@
       "bid_monotone": "d(b)/d(mu) = t*p > 0 => won-set & conversions non-decreasing in mu; maximised at mu=1",
       "corollary_5_3": "mu=1, v_i=t_i: payment = v_i p = welfare contribution => revenue monotonicity implies welfare monotonicity",
       "feasibility": "CPA = mu*t; CPA <= t  <=>  mu <= 1  (t>0). mu>1 infeasible.",
+      "revenue_max_among_equilibria": "bid(mu=1) - bid(mu<1) = t*p*(1-mu) > 0; in FPA the winner pays their bid, so every lower multiplier strictly lowers revenue => mu=1 is revenue-maximal",
       "welfare_argmax": "winner = argmax_i t_i p_{i,C} = argmax_i v_i p_{i,C} (Assumption 1) => per-cluster welfare maximal"
     },
     "source": "sections/main_results.tex:62-83; sections/auction_theory.tex:35-42",

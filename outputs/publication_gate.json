@@ -1,13 +1,13 @@
 {
   "claim_verdicts": {
-    "C1": "VERIFIED (symbolic Jensen + 200k-case corroboration)",
-    "C2": "VERIFIED (symbolic convexity + negative control)",
-    "C3": "VERIFIED (symbolic optimality + mu>1 infeasibility + welfare=max)",
+    "C1": "VERIFIED (SymPy + Z3 SMT proofs; 200k-case corroboration)",
+    "C2": "VERIFIED (SymPy + Z3 SMT convexity proof; negative control)",
+    "C3": "VERIFIED (SymPy + Z3 SMT; mu>1 infeasible; welfare=max; revenue-max eq.)",
     "C4": "FALSIFIES monotonicity (literal counterexample 3.23->3.03, 6.2%)",
     "C5": "FALSIFIES monotonicity (literal counterexample 5.5268->4.5977, 16.8%)",
-    "C6": "VERIFIED (symbolic lifting + 5000 LP solves, 0 violations)"
+    "C6": "VERIFIED (SymPy + Z3 SMT lifting; 5000 LP solves; full Table 1)"
   },
-  "elapsed_s": 17.641,
+  "elapsed_s": 71.803,
   "failures": [],
   "paper": "uiw8P2JGbW (arXiv 2605.31036)",
   "pass": true,

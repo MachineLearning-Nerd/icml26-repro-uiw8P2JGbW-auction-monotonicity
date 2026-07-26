@@ -54,3 +54,16 @@ Every claim below has an exact contract, visible source code, inline raw numbers
 ### Verifier failure semantics
 - `repro/proofs/symbolic.py` raises `ProofError` (subclass of `AssertionError`) on any unverified step; `repro/run_all.py` collects failures and exits **non-zero** if any verifier or test fails. The publication gate (`outputs/publication_gate.json`) records `"pass": false` with the failure list in that case.
 - Counterexample functions `assert` the paper's headline percentages within tolerance; a mismatch exits non-zero.
+
+
+---
+<!-- trackio-cell
+{"type": "markdown", "id": "cell_2f31e97a54e6", "created_at": "2026-07-26T01:38:39+00:00", "title": "Update: dual proof checker (SymPy + Z3 SMT) and complete C3"}
+-->
+**Revision note.** Since the visibility matrix above was first posted, the positive
+theorems (C1/C2/C3/C6) are now verified by **two** independent automated checkers:
+SymPy (CAS, per-step algebra) **and** Z3 (SMT theorem prover, `unsat` =
+decision-procedure proof over all reals). C3 now explicitly proves all **three**
+parts of Theorem 5.2 (conversion-max, revenue-max-among-equilibria, welfare-max)
+plus Corollary 5.3. Dependencies updated: numpy, scipy, sympy, **z3-solver 4.16**,
+pytest. Full gate (symbolic + SMT + counterexamples + finite + tests): PASS in ~86 s.

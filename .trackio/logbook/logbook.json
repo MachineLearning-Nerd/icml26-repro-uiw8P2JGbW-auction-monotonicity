@@ -2,18 +2,24 @@
   "schema_version": 1,
   "title": "Repro - Model Monotonicity in Autobidding Auctions",
   "emoji": "🎯",
-  "space_id": null,
+  "space_id": "DineshAI/uiw8P2JGbW",
   "paper": "2605.31036",
   "tags": [
     "icml2026-repro",
     "paper-uiw8P2JGbW"
   ],
-  "updated_at": "2026-07-25T11:36:58+00:00",
+  "updated_at": "2026-07-26T01:38:40+00:00",
   "root": {
     "slug": "index",
     "title": "Repro - Model Monotonicity in Autobidding Auctions",
     "file": "pages/index.md",
     "children": [
+      {
+        "slug": "table-1-monotonicity-characterization",
+        "title": "Table 1 monotonicity characterization",
+        "file": "pages/table-1-monotonicity-characterization/page.md",
+        "children": []
+      },
       {
         "slug": "claim-verification-summary",
         "title": "Claim verification summary",
@@ -76,6 +82,6 @@
       }
     ]
   },
-  "agent_view_tokens": 24300,
-  "revision": "1784979418889571000"
+  "agent_view_tokens": 26441,
+  "revision": "1785029920410412000"
 }

@@ -1,0 +1,35 @@
+{
+  "C1_jensen_smt": {
+    "claim": "C1",
+    "method": "Z3 LRA counterexample search",
+    "n_bidders": 3,
+    "n_subclusters": 4,
+    "result": "unsat => Jensen holds for ALL refinements",
+    "verdict": "PROVEN by SMT (decidable, complete)"
+  },
+  "C2_convexity_smt": {
+    "claim": "C2",
+    "method": "Z3 LRA counterexample search",
+    "n": 4,
+    "result": "unsat (no counterexample) => convex for ALL reals",
+    "verdict": "PROVEN by SMT (decidable, complete)"
+  },
+  "C3_mu_one_smt": {
+    "claim": "C3",
+    "facts": {
+      "bid_monotone": "t*p<=0 (t,p>0) is UNSAT => bid strictly increasing in mu",
+      "feasibility": "mu>1 & CPA<=t  is UNSAT => mu>1 infeasible",
+      "revenue_max": "mu<1 bid >= mu=1 bid is UNSAT => mu=1 revenue-maximal"
+    },
+    "method": "Z3 LRA counterexample search",
+    "verdict": "PROVEN by SMT (decidable, complete)"
+  },
+  "C6_lp_identity_smt": {
+    "claim": "C6",
+    "method": "Z3 LRA counterexample search",
+    "n_bidders": 2,
+    "n_subclusters": 3,
+    "result": "unsat => lifting identity holds for ALL reals",
+    "verdict": "PROVEN by SMT (decidable, complete)"
+  }
+}

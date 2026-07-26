@@ -47,6 +47,18 @@ def main() -> int:
         failures.append(f"symbolic_proofs: {e}")
         print(f"  FAILED: {e}")
 
+    # --- 1b. SMT proofs (Z3, second independent checker) -------------------
+    _section("1b. SMT PROOFS (Z3 theorem prover — decidable, complete)")
+    from repro.proofs import smt
+    try:
+        smt_certs = smt.all_smt_proofs()
+        _dump("smt_certificates.json", smt_certs)
+        for k, v in smt_certs.items():
+            print(f"  [{v['claim']}] {v.get('result', v.get('verdict',''))}")
+    except Exception as e:  # noqa: BLE001
+        failures.append(f"smt_proofs: {e}")
+        print(f"  FAILED: {e}")
+
     # --- 2. counterexamples -------------------------------------------------
     _section("2. COUNTEREXAMPLES (literal paper parameters)")
     from repro.proofs import counterexamples
@@ -111,12 +123,12 @@ def main() -> int:
             "legacy_regression": "outputs/auction_claims.json",
         },
         "claim_verdicts": {
-            "C1": "VERIFIED (symbolic Jensen + 200k-case corroboration)",
-            "C2": "VERIFIED (symbolic convexity + negative control)",
-            "C3": "VERIFIED (symbolic optimality + mu>1 infeasibility + welfare=max)",
+            "C1": "VERIFIED (SymPy + Z3 SMT proofs; 200k-case corroboration)",
+            "C2": "VERIFIED (SymPy + Z3 SMT convexity proof; negative control)",
+            "C3": "VERIFIED (SymPy + Z3 SMT; mu>1 infeasible; welfare=max; revenue-max eq.)",
             "C4": "FALSIFIES monotonicity (literal counterexample 3.23->3.03, 6.2%)",
             "C5": "FALSIFIES monotonicity (literal counterexample 5.5268->4.5977, 16.8%)",
-            "C6": "VERIFIED (symbolic lifting + 5000 LP solves, 0 violations)",
+            "C6": "VERIFIED (SymPy + Z3 SMT lifting; 5000 LP solves; full Table 1)",
         },
     }
     _dump("publication_gate.json", gate)

@@ -361,3 +361,13 @@ wheels = [
     { url = "https://files.pythonhosted.org/packages/a2/09/77d55d46fd61b4a135c444fc97158ef34a095e5681d0a6c10b75bf356191/sympy-1.14.0-py3-none-any.whl", hash = "sha256:e091cc3e99d2141a0ba2847328f5479b05d94a6635cb96148ccb3f34671bd8f5", size = 6299353, upload-time = "2025-04-27T18:04:59.103Z" },
 ]
 ```
+
+
+---
+<!-- trackio-cell
+{"type": "markdown", "id": "cell_fda1e44ea3d8", "created_at": "2026-07-26T01:38:40+00:00", "title": "Updated pinned dependencies (adds z3-solver)"}
+-->
+Updated environment (pyproject.toml + uv.lock):
+- Python 3.12.11
+- numpy 2.5.1, scipy 1.18.0, sympy 1.14.0, **z3-solver 4.16.0.0**, pytest 8.4.2, mpmath 1.3.0
+- Environment manager: **uv**. Full gate runtime: ~86 s (Z3 adds ~60 s vs the 20 s symbolic-only gate).

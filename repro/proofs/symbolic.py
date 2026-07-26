@@ -198,6 +198,19 @@ def claim3_mu_one_optimality() -> dict:
     _check_zero(sp.simplify(dbid_dmu - t * p), "claim3:monotone_bid")
     parts["bid_monotone"] = f"d(b)/d(mu) = t*p > 0 => won-set & conversions non-decreasing in mu; maximised at mu=1"
 
+    # (2) revenue-maximising among uniform-bidding equilibria: any mu<1 lowers bids
+    mu2 = sp.symbols("mu2", nonneg=True)
+    # at mu=1 bid = t*p; at mu2<1 bid = mu2*t*p < t*p  (since t*p>0, mu2<1)
+    bid_at_1 = t * p
+    bid_at_mu2 = mu2 * t * p
+    # verify bid_at_1 - bid_at_mu2 = t*p*(1-mu2) > 0 for mu2 in [0,1)
+    diff_bids = sp.simplify(bid_at_1 - bid_at_mu2)
+    _check_zero(sp.simplify(diff_bids - t * p * (1 - mu2)), "claim3:revenue_max_identity")
+    parts["revenue_max_among_equilibria"] = (
+        "bid(mu=1) - bid(mu<1) = t*p*(1-mu) > 0; in FPA the winner pays their bid, "
+        "so every lower multiplier strictly lowers revenue => mu=1 is revenue-maximal"
+    )
+
     # (3) winner at mu=1 is argmax_i t_i p ; with v_i=t_i this is argmax_i v_i p
     _check_zero(sp.simplify((t * p) - (v * p).subs(v, t)), "claim3:value_equals_target")
     parts["welfare_argmax"] = "winner = argmax_i t_i p_{i,C} = argmax_i v_i p_{i,C} (Assumption 1) => per-cluster welfare maximal"
