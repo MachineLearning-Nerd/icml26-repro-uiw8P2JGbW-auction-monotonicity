@@ -13,6 +13,7 @@ Exits non-zero if ANY claim verifier or test fails.
 from __future__ import annotations
 
 import json
+import hashlib
 import subprocess
 import sys
 import time
@@ -20,6 +21,19 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 OUT = ROOT / "outputs"
+SOURCE_ARCHIVE = ROOT / "source" / "arxiv-2605.31036.tar"
+SOURCE_ARCHIVE_SHA256 = "4c64d6db633bb1028e267c95abd0944611b7b07e91745f7456a7b0886e6aa07e"
+SOURCE_FILE_SHA256 = {
+    "source/main.tex": "aa6cdd42fa29a78804cdca8b1e93e2ab34454d17261f83797bab60a451fb06e8",
+}
+
+
+def _sha256(path: Path) -> str:
+    digest = hashlib.sha256()
+    with path.open("rb") as stream:
+        for chunk in iter(lambda: stream.read(1024 * 1024), b""):
+            digest.update(chunk)
+    return digest.hexdigest()
 
 
 def _dump(name: str, obj) -> None:
@@ -109,13 +123,49 @@ def main() -> int:
         failures.append("pytest_unit_suite")
         print(proc.stderr[-800:])
 
+    source_archive_sha256 = _sha256(SOURCE_ARCHIVE)
+    source_file_sha256 = {
+        relative: _sha256(ROOT / relative)
+        for relative in SOURCE_FILE_SHA256
+    }
+    if source_archive_sha256 != SOURCE_ARCHIVE_SHA256:
+        failures.append("source_archive_hash_changed")
+    if source_file_sha256 != SOURCE_FILE_SHA256:
+        failures.append("source_file_hash_changed")
+
     # --- aggregate gate -----------------------------------------------------
     elapsed = time.time() - t0
     gate = {
         "paper": "uiw8P2JGbW (arXiv 2605.31036)",
+        "overall_status": "INCONCLUSIVE",
+        "status_note": (
+            "C1, C2, C3, and C6 are conditional symbolic/SMT reconstructions; "
+            "C4 and C5 reproduce finite counterexamples at printed precision."
+        ),
+        "paper_claims_total": 6,
+        "paper_claims_verified": 0,
         "pass": len(failures) == 0,
+        "scoped_gate_passed": len(failures) == 0,
         "failures": failures,
         "elapsed_s": round(elapsed, 3),
+        "source_archive_sha256": source_archive_sha256,
+        "source_file_sha256": source_file_sha256,
+        "claim_confidence": {
+            "C1": "MEDIUM/HIGH",
+            "C2": "HIGH",
+            "C3": "MEDIUM/HIGH",
+            "C4": "HIGH",
+            "C5": "HIGH",
+            "C6": "MEDIUM/HIGH",
+        },
+        "current_claim_status": {
+            "C1": "VERIFIED_CONDITIONAL",
+            "C2": "VERIFIED_CONDITIONAL",
+            "C3": "VERIFIED_CONDITIONAL",
+            "C4": "COUNTEREXAMPLE_REPRODUCED",
+            "C5": "COUNTEREXAMPLE_REPRODUCED",
+            "C6": "VERIFIED_CONDITIONAL",
+        },
         "primary_evidence": {
             "symbolic_proofs": "outputs/symbolic_certificates.json",
             "counterexamples": "outputs/counterexamples.json",
@@ -123,12 +173,12 @@ def main() -> int:
             "legacy_regression": "outputs/auction_claims.json",
         },
         "claim_verdicts": {
-            "C1": "VERIFIED (SymPy + Z3 SMT proofs; 200k-case corroboration)",
-            "C2": "VERIFIED (SymPy + Z3 SMT convexity proof; negative control)",
-            "C3": "VERIFIED (SymPy + Z3 SMT; mu>1 infeasible; welfare=max; revenue-max eq.)",
-            "C4": "FALSIFIES monotonicity (literal counterexample 3.23->3.03, 6.2%)",
-            "C5": "FALSIFIES monotonicity (literal counterexample 5.5268->4.5977, 16.8%)",
-            "C6": "VERIFIED (SymPy + Z3 SMT lifting; 5000 LP solves; full Table 1)",
+            "C1": "VERIFIED CONDITIONALLY (SymPy/Z3 source reconstruction; 200k corroboration)",
+            "C2": "VERIFIED CONDITIONALLY (SymPy/Z3 convexity reconstruction; negative control)",
+            "C3": "VERIFIED CONDITIONALLY (SymPy/Z3 identities; 20k-instance corroboration)",
+            "C4": "COUNTEREXAMPLE REPRODUCED (printed VCG/tCPA parameters; 6.2% loss)",
+            "C5": "COUNTEREXAMPLE REPRODUCED (printed budgeted-FPA parameters; 16.8% loss)",
+            "C6": "VERIFIED CONDITIONALLY (SymPy/Z3 lifting identity; 5k LP corroboration)",
         },
     }
     _dump("publication_gate.json", gate)

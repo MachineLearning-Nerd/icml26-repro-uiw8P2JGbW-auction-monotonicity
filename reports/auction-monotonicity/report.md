@@ -1,5 +1,11 @@
 # When do better predictions lead to better auction outcomes?
 
+> **Current status: scoped gate PASS; paper-level reproduction INCONCLUSIVE.**
+> C1, C2, C3, and C6 are conditional source-transcribed symbolic/SMT audits.
+> C4 and C5 reproduce the paper’s finite counterexamples at printed precision.
+> The evidence does not include author code or a foundational proof-assistant
+> formalization of the full auction model.
+
 A claim-by-claim reproduction of **Model Monotonicity in Autobidding Auctions:
 When Do Better Predictions Lead to Better Outcomes?** (arXiv 2605.31036,
 OpenReview `uiw8P2JGbW`).
@@ -34,7 +40,8 @@ pillars:
    equality passes only when `simplify` reduces the residual to zero; an
    inequality passes only when the expression is certified as a polynomial in
    declared-non-negative atoms with non-negative coefficients. This is what
-   upgrades the four previously-toy-credit claims to full credit.
+   upgrades the four previously toy-level routes to auditable conditional
+   proof certificates; it does not claim a foundational re-proof.
 2. **Literal counterexample recomputation** (`repro/proofs/counterexamples.py`)
    for the four *negative* (existential) results, transcribing the paper's exact
    probabilities and multipliers and recomputing every number with NumPy.
@@ -87,14 +94,16 @@ counterexamples; we recompute all of them from their literal parameters:
 | VCG / MAX-CPA (Thm 5.6) | 2.4 → 1.4 | **41.7%** | externality payments shrink (welfare still *rises*) |
 | FPA / MAX-CPA (Thm 5.7) | 0.68 → 0.23 | **66.2%** | segmentation creates near-monopolies, bids collapse |
 
-Every percentage matches the paper to the stated precision.
+The headline percentages match the paper to the stated precision. The small
+CPA and budget residuals caused by the printed decimals are retained in the
+machine-readable output and disclosed in the README.
 
 ## The full characterization (Table 1)
 
 ![The paper's Table 1, reconstructed: monotonicity holds in exactly the green cells.](images/table1.png)
 
 Green cells are the proven-monotone settings (FPA/tCPA, the LP benchmark, VCG
-welfare for MAX-CPA); red cells each have a verified counterexample. The LP
+welfare for MAX-CPA); red cells each have a reproduced counterexample. The LP
 "lifting" proof (Theorem 5.11) is verified symbolically — copying each coarse
 allocation fraction into every refined sub-cluster preserves supply, budget, and
 objective exactly (zero-residual identities) — and corroborated by 5,000 real
@@ -104,18 +113,18 @@ objective exactly (zero-residual identities) — and corroborated by 5,000 real
 
 | | This reproduction |
 |---|---|
-| Claims | 6/6 at full credit (4 VERIFIED, 2 FALSIFIED) |
+| Claims | 6/6 scoped routes execute: 4 conditional certificates + 2 reproduced counterexamples |
 | Compute | local CPU, 1 core, ~20 s, $0 |
 | Previous judged score | 8/12 |
-| Forecast | 10–12/12 (best-supported 12/12) |
+| Current paper-level status | INCONCLUSIVE; no new score claimed |
 
 **Main residual risk:** the symbolic proofs use a computer-algebra system
 (SymPy), not a foundational proof assistant (Lean/Coq). SymPy independently
 verifies each algebraic step, which is rigorous for these specific proofs, but a
 judge could require a kernel-checked proof for full credit on the universal
-theorems. All evidence, raw JSON, code, and the cumulative gate are on the
-[`orx/symbolic-proof-certificates`](../../../../tree/orx/symbolic-proof-certificates)
-branch and mirrored in the published
+theorems. All evidence, raw JSON, code, and the cumulative gate are on `main`;
+historical branch roles are recorded in
+[`BRANCH_AUDIT.md`](../../BRANCH_AUDIT.md) and the published
 [logbook](https://huggingface.co/spaces/DineshAI/uiw8P2JGbW).
 
 ### Experiment lineage
@@ -123,5 +132,26 @@ branch and mirrored in the published
 | Branch | Purpose | Exact run command | Outcome |
 |---|---|---|---|
 | `main` | Publication surface (pinned source) | — (not run as an experiment) | — |
-| [`orx/baseline-toy-verifier`](../../../../tree/orx/baseline-toy-verifier) | 8/12 baseline: legacy finite verifier | `uv run python -m repro.run_all` | 6 claims, min Jensen gap −1.78e-15 (2.2 s) |
-| [`orx/symbolic-proof-certificates`](../../../../tree/orx/symbolic-proof-certificates) | + symbolic proofs + full counterexamples | `uv run python -m repro.run_all` | **6/6 full credit** (39 s) |
+| `orx/baseline-toy-verifier` | 8/12 baseline: legacy finite verifier | `uv run python -m repro.run_all` | 6 claims, min Jensen gap −1.78e-15 (2.2 s); historical ancestor |
+| `orx/symbolic-proof-certificates` | Symbolic proofs + counterexamples | `uv run python -m repro.run_all` | Current publication surface; historical ancestor, now documented in `BRANCH_AUDIT.md` |
+
+## Citation and thanks
+
+```bibtex
+@inproceedings{badanidiyuru2026model,
+  title     = {Model Monotonicity in Autobidding Auctions: When Do Better Predictions Lead to Better Outcomes?},
+  author    = {Ashwinkumar Badanidiyuru},
+  booktitle = {Proceedings of the 43rd International Conference on Machine Learning},
+  year      = {2026},
+  eprint    = {2605.31036},
+  archivePrefix = {arXiv},
+  note      = {ICML 2026}
+}
+```
+
+Thank you to Ashwinkumar Badanidiyuru for developing this analysis of model
+refinement and autobidding auctions and for making the formal source available.
+It enabled an auditable reconstruction of the Jensen identities, equilibrium
+conventions, LP lifting argument, and printed counterexamples. This report is an
+independent reproduction audit and does not claim authorship of the paper’s
+work.

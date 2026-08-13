@@ -1,20 +1,56 @@
 {
+  "claim_confidence": {
+    "C1": "MEDIUM/HIGH",
+    "C2": "HIGH",
+    "C3": "MEDIUM/HIGH",
+    "C4": "HIGH",
+    "C5": "HIGH",
+    "C6": "MEDIUM/HIGH"
+  },
   "claim_verdicts": {
-    "C1": "VERIFIED (SymPy + Z3 SMT proofs; 200k-case corroboration)",
-    "C2": "VERIFIED (SymPy + Z3 SMT convexity proof; negative control)",
-    "C3": "VERIFIED (SymPy + Z3 SMT; mu>1 infeasible; welfare=max; revenue-max eq.)",
-    "C4": "FALSIFIES monotonicity (literal counterexample 3.23->3.03, 6.2%)",
-    "C5": "FALSIFIES monotonicity (literal counterexample 5.5268->4.5977, 16.8%)",
-    "C6": "VERIFIED (SymPy + Z3 SMT lifting; 5000 LP solves; full Table 1)"
+    "C1": "VERIFIED CONDITIONALLY (SymPy/Z3 source reconstruction; 200k corroboration)",
+    "C2": "VERIFIED CONDITIONALLY (SymPy/Z3 convexity reconstruction; negative control)",
+    "C3": "VERIFIED CONDITIONALLY (SymPy/Z3 identities; 20k-instance corroboration)",
+    "C4": "COUNTEREXAMPLE REPRODUCED (printed VCG/tCPA parameters; 6.2% loss)",
+    "C5": "COUNTEREXAMPLE REPRODUCED (printed budgeted-FPA parameters; 16.8% loss)",
+    "C6": "VERIFIED CONDITIONALLY (SymPy/Z3 lifting identity; 5k LP corroboration)"
+  },
+  "current_claim_status": {
+    "C1": "VERIFIED_CONDITIONAL",
+    "C2": "VERIFIED_CONDITIONAL",
+    "C3": "VERIFIED_CONDITIONAL",
+    "C4": "COUNTEREXAMPLE_REPRODUCED",
+    "C5": "COUNTEREXAMPLE_REPRODUCED",
+    "C6": "VERIFIED_CONDITIONAL"
+  },
+  "evidence_counts": {
+    "c1_c2_calibrated_cases": 200000,
+    "c1_c2_uncalibrated_negative_control_violations": 100714,
+    "c3_instances": 20000,
+    "c3_mu_grid_points": 81,
+    "c6_lp_instances": 5000,
+    "legacy_finite_cases": 3498
   },
   "elapsed_s": 71.803,
   "failures": [],
+  "overall_status": "INCONCLUSIVE",
   "paper": "uiw8P2JGbW (arXiv 2605.31036)",
+  "paper_claims_total": 6,
+  "paper_claims_verified": 0,
   "pass": true,
+  "publication_gate_passed": true,
+  "scoped_gate_passed": true,
+  "source_archive_sha256": "4c64d6db633bb1028e267c95abd0944611b7b07e91745f7456a7b0886e6aa07e",
+  "source_file_sha256": {
+    "source/main.tex": "aa6cdd42fa29a78804cdca8b1e93e2ab34454d17261f83797bab60a451fb06e8"
+  },
+  "status_note": "C1/C2/C3/C6 are conditional symbolic/SMT reconstructions; C4/C5 reproduce finite counterexamples at printed precision; finite checks are corroborative.",
+  "tests_passed": true,
   "primary_evidence": {
     "counterexamples": "outputs/counterexamples.json",
     "finite_corroboration": "outputs/finite_checks.json",
     "legacy_regression": "outputs/auction_claims.json",
+    "smt_proofs": "outputs/smt_certificates.json",
     "symbolic_proofs": "outputs/symbolic_certificates.json"
   }
 }
